@@ -83,6 +83,7 @@ repos:
     rev: 0.7.22
     hooks:
       - id: mdformat
+        exclude: api.md
         additional_dependencies:
           - mdformat-config
           - mdformat-footnote
