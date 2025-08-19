@@ -1,5 +1,5 @@
-site_name: typed-sentinels
 site_url: https://typed-sentinels.blockmage.dev
+site_name: typed-sentinels
 site_description: Statically-typed sentinel objects with singleton qualities (for Python 3.12+).
 repo_url: https://github.com/blockmage/typed_sentinels
 repo_name: blockmage/typed_sentinels
