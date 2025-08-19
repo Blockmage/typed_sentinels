@@ -6,12 +6,7 @@ from collections.abc import Callable
 
 import pytest
 
-from typed_sentinels import (
-    InvalidHintError,
-    Sentinel,
-    SubscriptedTypeError,
-    is_sentinel,
-)
+from typed_sentinels import InvalidHintError, Sentinel, SubscriptedTypeError, is_sentinel
 
 
 def test_subscription_affects_hint() -> None:

@@ -5,60 +5,155 @@ from weakref import WeakValueDictionary
 
 from ._exceptions import InvalidHintError, SubscriptedTypeError
 
-type _InstanceCache = WeakValueDictionary[tuple[str, Any, Any], 'Sentinel[Any]']
+type _InstanceCache = WeakValueDictionary[tuple[str, Any], 'Sentinel[Any]']
 
-OBJECT = object()
+_OBJECT = object()
 
 
 @final
 class Sentinel[T: Any]:
+    """Statically-typed sentinel objects with singleton qualities.
+
+    `Sentinel` instances provide unique placeholder objects that maintain singleton behavior for a given type hint. They
+    are particularly useful as default parameter values when `None` is not appropriate or when type safety is desired.
+
+    The `Sentinel` class is particularly well-suited for use with types requiring parameters which are only available at
+    runtime, where creating a default instance of the type may not be possible in advance, but the structural contract
+    of the type is otherwise guaranteed to be fulfilled once present.
+
+    **Key features:**
+
+    - **Versatile:** Emulate any type, including user-defined types and types requiring parameters.
+    - **Type-safe:** Appears to the type-checker as an *instance* of the target type.
+    - **Thread-safe:** Safe for concurrent access across multiple threads.
+    - **Singleton behavior:** Only one instance exists per type hint.
+    - **Serializable:** Maintains singleton property across pickle operations.
+    - **Lightweight:** Sentinels are incredibly lightweight objects.
+    - **Immutable:** Cannot be modified after creation.
+    - **Falsy:** Always evaluates to `False` in boolean contexts.
+    - **Callable:** Calling a `Sentinel` instance always returns the instance.
+
+    Examples
+    --------
+    **Basic usage:**
+
+    >>> UNSET: str = Sentinel(str)
+    >>> def process(value: str = UNSET) -> str:
+    ...     if not value:  # Sentinels are always falsy
+    ...         return 'No value'
+    ...     return f'Got: {value}'
+
+    **Type subscription syntax:**
+
+    >>> UNSET = Sentinel[str]()
+    >>> OTHER = Sentinel[str]()
+    >>> UNSET is OTHER  # True - Singleton behavior
+    True
+
+    **With complex types:**
+
+    >>> CONFIG: dict[str, Any] = Sentinel(dict[str, Any])
+    >>> def setup(config: dict[str, Any] = CONFIG) -> None:
+    ...     if not config:
+    ...         config = {'default': True}
+    """
+
     __slots__ = ('__weakref__', '_hint')
 
     _cls_cache: ClassVar[_InstanceCache] = WeakValueDictionary()
-    _cls_hint: ClassVar[Any] = OBJECT
+    _cls_hint: ClassVar[Any] = _OBJECT
     _cls_lock: ClassVar[Lock] = Lock()
 
     _hint: T
 
     @property
     def hint(self) -> T:
+        """Return the type hint associated with this `Sentinel` instance.
+
+        Returns
+        -------
+        T
+            Type represented by the `Sentinel` instance.
+        """
         return self._hint
 
     def __class_getitem__(cls, key: Any) -> T:
+        """Support type subscription syntax like (e.g., `Sentinel[str]()`).
+
+        Parameters
+        ----------
+        key : Any
+            Type to be used as the hint for the sentinel.
+
+        Returns
+        -------
+        T
+            Class object with the type hint stored for later instantiation, cast to the specified type.
+        """
         cls._cls_hint = key
         if type(key) is TypeVar:
             cls._cls_hint = Any
         return cast('T', cls)
+
+    def __new__(cls, hint: Any = _OBJECT, /) -> Any:
+        """Create or retrieve a `Sentinel` instance for the given `hint` type.
+
+        Implements the singleton pattern, ensuring that only one `Sentinel` instance exists for each unique
+        `(cls.__name__, hint)` combination. The method is thread-safe and lightweight; it attempts to return early with
+        any cached instance that might exist, doing so before acquiring the class-level lock.
+
+        Parameters
+        ----------
+        hint : Any, optional
+            Type that this `Sentinel` should represent. If not provided, and if the class has not been otherwise
+            parameterized via subscription notation, defaults to `Any`.
+
+        Returns
+        -------
+        Sentinel[T]
+            `Sentinel` object instance for the given `hint` type, either created anew or retrievd from the class-level
+            `WeakValueDictionary` cache.
+
+        Raises
+        ------
+        InvalidHintError
+            If `hint` is `None`, a `Sentinel` instance, or the `Sentinel` class object itself.
+        SubscriptedTypeError
+            If provided both a subscripted type parameter and a direct type argument and the types should differ (e.g.,
+            `Sentinel[A](B)` will raise a `SubscriptedTypeErorr`).
+        """
+        if (_cls_hint := cls._cls_hint) is not _OBJECT:
+            cls._cls_hint = _OBJECT
+        if (hint is _OBJECT) and (_cls_hint is not _OBJECT):
+            hint = _cls_hint
+        if hint is _OBJECT:
+            hint = Any
+
+        key = (cls.__name__, hint)
+        if (inst := cls._cls_cache.get(key)) is not None:
+            return cast('T', inst)
+
+        if (hint is not _OBJECT) and (_cls_hint is not _OBJECT):
+            if (hint is not Any) and (_cls_hint is not Any):
+                if (hint != _cls_hint) and (hint is not _cls_hint):
+                    raise SubscriptedTypeError(hint=hint, subscripted=_cls_hint)
+
+        if isinstance(hint, Sentinel) or (hint is Sentinel) or (hint is None):
+            raise InvalidHintError(hint)
+
+        with cls._cls_lock:
+            if (inst := cls._cls_cache.get(key)) is None:
+                inst = super().__new__(cls)
+                super().__setattr__(inst, '_hint', hint)
+                cls._cls_cache[key] = inst
+
+        return cast('T', inst)
 
     def __getitem__(self, key: Any) -> T:
         return cast('T', self)
 
     def __call__(self, *args: Any, **kwds: Any) -> T:
         return cast('T', self)
-
-    def __new__(cls, hint: Any = OBJECT, /) -> Any:
-        if (_cls_hint := cls._cls_hint) is not OBJECT:
-            cls._cls_hint = OBJECT
-
-        if (hint is not OBJECT) and (_cls_hint is not OBJECT) and (hint != _cls_hint):
-            raise SubscriptedTypeError(hint=hint, subscripted=_cls_hint)
-        if (hint is OBJECT) and (_cls_hint is not OBJECT):
-            hint = _cls_hint
-        elif hint is OBJECT:
-            hint = Any
-
-        if isinstance(hint, Sentinel) or (hint is Sentinel) or (hint is None):
-            raise InvalidHintError(hint)
-
-        key = (cls.__name__, _cls_hint, hint)
-        if (inst := cls._cls_cache.get(key)) is None:
-            with cls._cls_lock:
-                if (inst := cls._cls_cache.get(key)) is None:
-                    inst = super().__new__(cls)
-                    super().__setattr__(inst, '_hint', hint)
-                    cls._cls_cache[key] = inst
-
-        return cast('T', inst)
 
     def __str__(self) -> str:
         hint_name = str(self._hint)
@@ -73,9 +168,37 @@ class Sentinel[T: Any]:
         return hash((self.__class__, self._hint))
 
     def __bool__(self) -> bool:
+        """Return `False` - Sentinels are always "falsy".
+
+        This allows for natural usage patterns like:
+
+        ```pycon
+        >>> if not value:  # Where `value` might be a `Sentinel` instance
+        ```
+
+        Returns
+        -------
+        bool
+            Always `False`.
+        """
         return False
 
     def __eq__(self, other: object) -> bool:
+        """Check equality with another object.
+
+        Two `Sentinels` are equal if they have the same `__class__` and `hint` type.
+
+        Parameters
+        ----------
+        other : object
+            Object with which to compare.
+
+        Returns
+        -------
+        bool
+            - `True` if `other` is an object of the same `__class__` and `hint`.
+            - `False` otherwise.
+        """
         if not isinstance(other, self.__class__):
             return NotImplemented
         return self.__class__ == other.__class__ and self._hint == other._hint
