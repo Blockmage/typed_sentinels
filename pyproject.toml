@@ -1,3 +1,8 @@
+[project.urls]
+  documentation = "https://typed-sentinels.blockmage.dev"
+  homepage      = "https://github.com/blockmage/typed_sentinels"
+  repository    = "https://github.com/blockmage/typed_sentinels"
+
 [project]
   description     = "Statically-typed sentinel objects with singleton qualities."
   name            = "typed-sentinels"
@@ -10,6 +15,22 @@
   ]
 
   dependencies = [  ]
+
+[dependency-groups]
+  dev = [
+    "commitizen>=4.8.3",
+    "coverage>=7.9.1",
+    "docformatter>=1.7.7",
+    "mkdocs-material>=9.6.15",
+    "mkdocs>=1.6.1",
+    "mkdocstrings[python]>=0.30.0",
+    "pre-commit>=4.2.0",
+    "pyright>=1.1.402",
+    "pytest-cov>=6.2.1",
+    "pytest>=8.4.1",
+    "pytest>=8.4.1",
+    "ruff>=0.12.1",
+  ]
 
 # -------------------------------- build system --------------------------------
 [build-system]
@@ -103,7 +124,9 @@
 
     ignore = [
       "ANN401", # any-type
+      "COM",    # flake8-commas
       "D1",     # undocumented-{module,class,method,...}
+      "INP001", # implicit-namespace-package
       "SIM102", # collapsible-if
       "SLF001", # private-member-access
       "T201",   # print
@@ -149,9 +172,3 @@
   [tool.uv.pip]
     compile-bytecode = true
     require-hashes   = true
-
-[dependency-groups]
-  dev = [
-    "pytest-cov>=6.2.1",
-    "pytest>=8.4.1",
-  ]

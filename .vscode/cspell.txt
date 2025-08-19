@@ -1,4 +1,7 @@
+inlinehilite
 mdformat
-norecursedirs
-wikilink
 monkeyc
+norecursedirs
+pymdownx
+superfences
+wikilink

@@ -45,6 +45,10 @@
 !/tests/**/*
 !/workers/**/*
 
+# === Documentation ===
+!/docs/**/*.md
+!/docs/**/*.png
+
 # === Generic 'ignore', 'rc', and 'config' Files ===
 !*.config.*
 !.*ignore
@@ -356,3 +360,4 @@ wheels/
 
 # ================================= Overrides ==================================
 !*example*
+!/examples/*
