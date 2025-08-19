@@ -1,0 +1,182 @@
+fail_fast: true
+
+default_language_version:
+  python: "3.12"
+
+default_install_hook_types:
+  - commit-msg
+  - pre-commit
+  - pre-push
+
+exclude: |
+  (?x)
+  .*-lock\..* |
+  .*\.lock$   |
+  .*example.* |
+  cspell\.txt
+
+repos:
+  # -------------------------------- [ biome ] ---------------------------------
+  - repo: https://github.com/biomejs/pre-commit
+    rev: v2.2.0
+    hooks:
+      - id: biome-check
+        additional_dependencies: ["@biomejs/biome@2.0.6"]
+        types_or: [css, javascript, json, jsx, ts, tsx]
+
+  # --------------- [ check-github-workflows | check-taskfile ] ----------------
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.3
+    hooks:
+      - id: check-github-workflows
+        args: [--verbose]
+      - id: check-taskfile
+
+  # ------------------------------ [ commitizen ] ------------------------------
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.8.3
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+      - id: commitizen-branch
+        stages: [manual]
+
+  # -------------------------------- [ cspell ] --------------------------------
+  - repo: https://github.com/streetsidesoftware/cspell-cli
+    rev: v9.2.0
+    hooks:
+      - id: cspell
+        name: "check spelling: workspace files"
+        args:
+          - --config
+          - cspell.config.jsonc
+          - --no-summary
+          - --no-progress
+          - --no-must-find-files
+      - id: cspell
+        name: "check spelling: commit message"
+        args:
+          - --config
+          - cspell.config.jsonc
+          - --no-must-find-files
+          - --no-progress
+          - --no-summary
+          - --files
+          - .git/COMMIT_EDITMSG
+        stages: [commit-msg]
+        always_run: true
+
+  # ---------------------------- [ gitignore-tidy ] ----------------------------
+  - repo: https://github.com/lorenzwalthert/gitignore-tidy
+    rev: 0.1.2
+    hooks:
+      - id: tidy-gitignore
+
+  # ------------------------------- [ gitleaks ] -------------------------------
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks
+
+  # ------------------------------- [ mdformat ] -------------------------------
+  - repo: https://github.com/hukkin/mdformat
+    rev: 0.7.22
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-config
+          - mdformat-footnote
+          - mdformat-frontmatter
+          - mdformat-gfm
+          - mdformat-gfm-alerts
+          - mdformat-mkdocs
+          - mdformat-pyproject
+          - mdformat-ruff
+          - mdformat-shfmt
+          - mdformat-simple-breaks
+          - mdformat-tables
+          - mdformat-web
+          - mdformat-wikilink
+          - ruff
+
+  # ------------------------------ [ pre-commit ] ------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-toml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: double-quote-string-fixer
+      - id: end-of-file-fixer
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+        args: [--fix=auto]
+      - id: check-added-large-files
+        args: [--maxkb=8192]
+
+  # ------------------------------- [ pyright ] --------------------------------
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.403
+    hooks:
+      - id: pyright
+        stages: [pre-push]
+
+  # -------------------------------- [ pytest ] --------------------------------
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: >
+          sh -c 'if [ ! -x ".venv/bin/pytest" ]; then
+            echo "Skipping - pytest not found."
+          elif ! command -v find >/dev/null 2>&1; then
+            echo "Skipping - command not found: find"
+          else
+            found="$(find . -iname "*test*.py" \
+              -not -ipath "**/.venv/**" \
+              -not -ipath "**/node_modules/**" \
+              -not -ipath "**/*data*/" \
+              -not -ipath ".*" -print)"
+            if [ "$found" != "" ]; then
+              ".venv/bin/pytest"
+            fi
+          fi'
+        language: system
+        types: [python]
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
+
+  # --------------------------------- [ ruff ] ---------------------------------
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.12.9
+    hooks:
+      - id: ruff-check
+        types_or: [python, pyi]
+        args: [--fix]
+      - id: ruff-format
+        types_or: [python, pyi]
+
+  # -------------------------------- [ taplo ] ---------------------------------
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-lint
+      - id: taplo-format
+
+  # -------------------------- [ validate-pyproject ] --------------------------
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.24.1
+    hooks:
+      - id: validate-pyproject
+        additional_dependencies: ["validate-pyproject-schema-store[all]"]
+
+  # ------------------------------- [ yamlfmt ] --------------------------------
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.17.2
+    hooks:
+      - id: yamlfmt

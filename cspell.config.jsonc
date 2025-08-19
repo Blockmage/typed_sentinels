@@ -1,0 +1,136 @@
+{
+  "language": "en",
+  "useGitignore": true,
+  "allowCompoundWords": false,
+  "ignoreRandomStrings": true,
+
+  "ignorePaths": [
+    "**/.git/{index,*refs,*HEAD}",
+    "**/.git/{info,lfs,logs,refs,objects}/**",
+    "**/.venv/",
+    "**/*-lock.*",
+    "**/*.env",
+    "**/*.lock",
+    "**/node_modules/"
+  ],
+
+  "ignoreRegExpList": [
+    // 1Password secret references
+    "\\b[a-z0-9]{20,}\\b",
+    // Full-caps acronyms of 3-5 length
+    "\\b[A-Z]{3,5}\\b",
+    // All-caps variable names with underscores (e.g., 'INSTALL_CROC')
+    "\\b[A-Z]+_[A-Z0-9_]+\\b",
+    // Partial words in text like '[Dd]esktop'
+    "\\[[A-Za-z]{1,2}\\][a-zA-Z]+",
+    // File extensions of 1-6 length (e.g., '.icns', '.ovpn', etc.)
+    "\\.[a-zA-Z]{1,6}(?![a-zA-Z])",
+    // SSH keys and base64-like strings
+    "\\b[A-Za-z0-9+/]{20,}={0,2}\\b",
+    // Password hashes (starts with '$', alphanum and special chars)
+    "\\$[0-9]\\$[A-Za-z0-9./]+\\$[A-Za-z0-9./]+"
+  ],
+
+  "dictionaryDefinitions": [
+    {
+      "addWords": true,
+      "description": "Workspace Custom Wordlist",
+      "name": "Workspace Custom Wordlist",
+      "path": "./.vscode/cspell.txt"
+    },
+    {
+      "addWords": true,
+      "description": "User Custom Wordlist",
+      "name": "User Custom Wordlist",
+      "path": "~/.config/cspell/cspell.txt"
+    }
+  ],
+
+  "dictionaries": [
+    // Custom Dictionaries
+    "Workspace Custom Wordlist",
+    "User Custom Wordlist",
+    // Dictionaries Provided by cSpell
+    "ada",
+    "aws",
+    "bash",
+    "city-names-finland",
+    "clojure",
+    "coding-compound-terms",
+    "companies",
+    "computing-acronyms",
+    "cpp",
+    "cryptocurrencies",
+    "csharp",
+    "css",
+    "dart",
+    "data-science-models",
+    "data-science-tools",
+    "data-science",
+    "de-de",
+    "django",
+    "docker",
+    "dotnet",
+    "elisp",
+    "elixir",
+    "en_us",
+    "en-common-misspellings",
+    "en-shared",
+    "en-us-common-misspellings",
+    "filetypes",
+    "flutter",
+    "fonts",
+    "fsharp",
+    "fullstack",
+    "game-development",
+    "gaming-terms",
+    "gis",
+    "git",
+    "golang",
+    "google",
+    "grc",
+    "haskell",
+    "html-symbol-entities",
+    "html",
+    "java",
+    "julia",
+    "k8s",
+    "kotlin",
+    "la",
+    "latex",
+    "lorem-ipsum",
+    "lua",
+    "makefile",
+    "medical terms",
+    "mnemonics",
+    "monkeyc",
+    "networking-terms",
+    "node",
+    "npm",
+    "people-names",
+    "php",
+    "pokemon",
+    "powershell",
+    "public-licenses",
+    "python-common",
+    "python",
+    "r",
+    "redis",
+    "ruby",
+    "rust",
+    "scala",
+    "scientific-terms-us",
+    "shellscript",
+    "software-term-suggestions",
+    "software-tools",
+    "softwareTerms",
+    "sql",
+    "svelte",
+    "swift",
+    "terraform",
+    "typescript",
+    "vim",
+    "web-services",
+    "win32"
+  ]
+}
