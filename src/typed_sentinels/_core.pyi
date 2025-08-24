@@ -13,7 +13,8 @@ from typing import (
 )
 from weakref import WeakValueDictionary
 
-_T = TypeVar('_T')
+_T = TypeVar('_T', bound=Any)
+_T2 = TypeVar('_T2', bound=Any)
 
 @final
 class Sentinel(Generic[_T]):  # noqa: UP046
@@ -35,9 +36,11 @@ class Sentinel(Generic[_T]):  # noqa: UP046
 
     # Overloads for `__new__` --------------------------------------------------
     @overload
-    def __new__(cls: type[Sentinel[_T]], /) -> _T: ...
+    def __new__(cls: type[Sentinel[_T2]], /) -> _T2: ...
     @overload
     def __new__(cls: type[Sentinel[_T]], hint: type[_T], /) -> _T: ...
+    @overload
+    def __new__(cls: type[Sentinel[_T2]], hint: Callable[[_T2], Any]) -> _T2: ...
     @overload
     def __new__(cls: type[Sentinel[Any]], hint: Any, /) -> Any: ...
 
