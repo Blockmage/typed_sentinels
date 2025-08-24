@@ -1,3 +1,8 @@
+# pyright: reportAttributeAccessIssue=none
+# pyright: reportUnknownArgumentType=none
+# pyright: reportUnknownMemberType=none
+# pyright: reportUnknownVariableType=none
+
 import copy
 import pickle
 import typing
@@ -10,15 +15,21 @@ from typed_sentinels import InvalidHintError, Sentinel, SubscriptedTypeError, is
 
 
 def test_subscription_affects_hint() -> None:
-    s1: Callable[..., str] = Sentinel[Callable[..., str]]()
-    s2: Callable[..., str] = Sentinel(Callable[..., str])
+    s1 = Sentinel[Callable[..., str]]()
+    s2 = Sentinel(Callable[..., str])
+    s3 = Sentinel[str](str)
+    s4 = Sentinel(str)
+    s5 = Sentinel[str]()
+    s6 = Sentinel()
 
     assert repr(s1) == repr(s2) == '<Sentinel: collections.abc.Callable[..., str]>'
+    assert s3 is s4
+    assert s5 is not s6
 
 
 def test_subscription() -> None:
-    s1: str = Sentinel[str](str)
-    s2: Callable[..., str] = Sentinel[Callable[..., str]](Callable[..., str])
+    s1 = Sentinel[str](str)
+    s2: Callable[..., str] = Sentinel[Callable[..., str]]()
     s3: Callable[..., bytes] = Sentinel[Callable[..., bytes]]()
     s4: Callable[..., int] = Sentinel[Callable[..., int]]()
     s5: Callable[..., bytes] = Sentinel[Callable[..., bytes]]()
@@ -111,7 +122,7 @@ def test_reduce() -> None:
     s = Sentinel(bytes)
     reduce_func, reduce_args = s.__reduce__()
 
-    assert reduce_func(*reduce_args) is s
+    assert reduce_func(*reduce_args) is s  # pyright: ignore[reportCallIssue]
 
 
 def test_copy() -> None:
