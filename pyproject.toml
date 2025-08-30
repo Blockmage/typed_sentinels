@@ -6,7 +6,7 @@
   description     = "Statically-typed sentinel objects with singleton qualities."
   name            = "typed-sentinels"
   readme          = "README.md"
-  requires-python = ">=3.12"
+  requires-python = ">=3.9"
   version         = "1.0.1"
 
   authors = [
@@ -124,7 +124,7 @@
   indent-width      = 4
   line-length       = 120
   respect-gitignore = true
-  target-version    = "py312"
+  target-version    = "py313"
   unsafe-fixes      = true
 
   [tool.ruff.format]
@@ -155,7 +155,7 @@
       "*test*" = [ "ANN", "D", "N", "Q", "S" ]
 
     [tool.ruff.lint.isort]
-      known-first-party = [  ]
+      known-first-party = [ "typed_sentinels" ]
 
     [tool.ruff.lint.flake8-unused-arguments]
       ignore-variadic-names = true
