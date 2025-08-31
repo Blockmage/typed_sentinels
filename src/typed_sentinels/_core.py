@@ -1,22 +1,17 @@
-from __future__ import annotations
-
+from collections.abc import Callable
 from threading import Lock
-from typing import TYPE_CHECKING, Any, ClassVar, Generic, NoReturn, SupportsIndex, TypeGuard, TypeVar, cast, final
+from typing import Any, ClassVar, NoReturn, SupportsIndex, TypeGuard, TypeVar, final
 from weakref import WeakValueDictionary
 
 from ._exceptions import InvalidHintError, SubscriptedTypeError
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
-    from types import GenericAlias
-
-_T = TypeVar('_T', bound=Any)
+type _InstanceCache = WeakValueDictionary[tuple[str, Any], 'Sentinel[Any]']
 
 _OBJECT = object()
 
 
 @final
-class Sentinel(Generic[_T]):  # noqa: UP046
+class Sentinel:
     """Statically-typed sentinel objects with singleton qualities.
 
     `Sentinel` instances provide unique placeholder objects that maintain singleton behavior for a given type hint. They
@@ -65,14 +60,14 @@ class Sentinel(Generic[_T]):  # noqa: UP046
 
     __slots__ = ('__weakref__', '_hint')
 
-    _cls_cache: ClassVar[WeakValueDictionary[tuple[str, Any], Sentinel[Any]]] = WeakValueDictionary()
-    _cls_hint: ClassVar[Any] = ...
+    _cls_cache: ClassVar[_InstanceCache] = WeakValueDictionary()
+    _cls_hint: ClassVar[Any] = _OBJECT
     _cls_lock: ClassVar[Lock] = Lock()
 
-    _hint: _T
+    _hint: Any
 
     @property
-    def hint(self) -> _T:
+    def hint(self) -> Any:
         """Return the type hint associated with this `Sentinel` instance.
 
         Returns
@@ -82,7 +77,7 @@ class Sentinel(Generic[_T]):  # noqa: UP046
         """
         return self._hint
 
-    def __class_getitem__(cls, key: Any) -> GenericAlias:
+    def __class_getitem__(cls, key: Any) -> Any:
         """Support type subscription syntax like (e.g., `Sentinel[str]()`).
 
         Parameters
@@ -98,9 +93,9 @@ class Sentinel(Generic[_T]):  # noqa: UP046
         cls._cls_hint = key
         if type(key) is TypeVar:
             cls._cls_hint = Any
-        return cast('GenericAlias', cls)
+        return cls
 
-    def __new__(cls, hint: Any = ..., /) -> Any:
+    def __new__(cls, hint: Any = _OBJECT, /) -> Any:
         """Create or retrieve a `Sentinel` instance for the given `hint` type.
 
         Implements the singleton pattern, ensuring that only one `Sentinel` instance exists for each unique
@@ -127,18 +122,18 @@ class Sentinel(Generic[_T]):  # noqa: UP046
             If provided both a subscripted type parameter and a direct type argument and the types should differ (e.g.,
             `Sentinel[A](B)` will raise a `SubscriptedTypeErorr`).
         """
-        if (_cls_hint := cls._cls_hint) is not ...:
-            cls._cls_hint = ...
-        if (hint is ...) and (_cls_hint is not ...):
+        if (_cls_hint := cls._cls_hint) is not _OBJECT:
+            cls._cls_hint = _OBJECT
+        if (hint is _OBJECT) and (_cls_hint is not _OBJECT):
             hint = _cls_hint
-        if hint is ...:
+        if hint is _OBJECT:
             hint = Any
 
         key = (cls.__name__, hint)
         if (inst := cls._cls_cache.get(key)) is not None:
-            return cast('_T', inst)
+            return inst
 
-        if (hint is not ...) and (_cls_hint is not ...):
+        if (hint is not _OBJECT) and (_cls_hint is not _OBJECT):
             if (hint is not Any) and (_cls_hint is not Any):
                 if (hint != _cls_hint) and (hint is not _cls_hint):
                     raise SubscriptedTypeError(hint=hint, subscripted=_cls_hint)
@@ -152,13 +147,13 @@ class Sentinel(Generic[_T]):  # noqa: UP046
                 super().__setattr__(inst, '_hint', hint)
                 cls._cls_cache[key] = inst
 
-        return cast('_T', inst)
+        return inst
 
-    def __getitem__(self, key: Any) -> _T:
-        return cast('_T', self)
+    def __getitem__(self, key: Any) -> Any:
+        return self
 
-    def __call__(self, *args: Any, **kwds: Any) -> _T:
-        return cast('_T', self)
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        return self
 
     def __str__(self) -> str:
         hint_name = str(self._hint)
@@ -208,16 +203,16 @@ class Sentinel(Generic[_T]):  # noqa: UP046
             return NotImplemented
         return self.__class__ == other.__class__ and self._hint == other._hint
 
-    def __copy__(self) -> Sentinel[_T]:
+    def __copy__(self) -> 'Sentinel[Any]':
         return self
 
-    def __deepcopy__(self, _: Any) -> Sentinel[_T]:
+    def __deepcopy__(self, _: Any) -> 'Sentinel[Any]':
         return self
 
-    def __reduce__(self) -> tuple[Callable[..., Sentinel[_T]], tuple[_T]]:
+    def __reduce__(self) -> tuple[Callable[..., 'Sentinel[Any]'], tuple[Any]]:
         return (self.__class__, (self._hint,))
 
-    def __reduce_ex__(self, protocol: SupportsIndex) -> tuple[Callable[..., Sentinel[_T]], tuple[_T]]:
+    def __reduce_ex__(self, protocol: SupportsIndex) -> tuple[Callable[..., 'Sentinel[Any]'], tuple[Any]]:
         return self.__reduce__()
 
     def __setattr__(self, name: str, value: Any) -> NoReturn:
@@ -229,7 +224,7 @@ class Sentinel(Generic[_T]):  # noqa: UP046
         raise AttributeError(msg)
 
 
-def is_sentinel[T](obj: Any, typ: T | None = None) -> TypeGuard[Sentinel[T]]:
+def is_sentinel[T](obj: Any, typ: Any = None) -> TypeGuard[Sentinel[T]]:
     """Return `True` if `obj` is a `Sentinel` instance, optionally further narrowed to be of type `typ`.
 
     Parameters
@@ -247,5 +242,6 @@ def is_sentinel[T](obj: Any, typ: T | None = None) -> TypeGuard[Sentinel[T]]:
         - `False` otherwise.
     """
     if typ is not None:
-        return isinstance(obj, Sentinel) and obj.hint == typ  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+        if isinstance(obj, Sentinel) and hasattr(obj, 'hint'):
+            return obj.hint == typ
     return isinstance(obj, Sentinel)

@@ -3,5 +3,6 @@ mdformat
 monkeyc
 norecursedirs
 pymdownx
+sntl
 superfences
 wikilink
