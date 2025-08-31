@@ -1,6 +1,5 @@
 [project.urls]
   documentation = "https://typed-sentinels.blockmage.dev"
-  homepage      = "https://github.com/blockmage/typed_sentinels"
   repository    = "https://github.com/blockmage/typed_sentinels"
 
 [project]
