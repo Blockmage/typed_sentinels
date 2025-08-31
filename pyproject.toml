@@ -74,9 +74,19 @@
 
 # ------------------------------- tool: pyright --------------------------------
 [tool.pyright]
-  include          = [ ".", "src" ]
+  include = [ ".", "src", "tests" ]
+
+  exclude = [
+    ".git/**/*",
+    ".venv/**/*",
+    "docs/**/*",
+    "examples/**/*",
+    "images/**/*",
+    "reports/**/*",
+  ]
+
   pythonPlatform   = "Linux"
-  pythonVersion    = "3.12"
+  pythonVersion    = "3.13"
   typeCheckingMode = "strict"
   venv             = ".venv"
   venvPath         = "."
@@ -90,7 +100,7 @@
   useLibraryCodeForTypes      = true
 
   executionEnvironments = [
-    { pythonVersion = "3.12", root = "." },
+    { pythonVersion = "3.13", root = "." },
   ]
 
 # -------------------------------- tool: pytest --------------------------------
