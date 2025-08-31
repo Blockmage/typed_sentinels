@@ -11,7 +11,12 @@
   version         = "1.0.1"
 
   authors = [
-    { email = "alchemyst@alchemyst.dev", name = "Alchemyst" },
+    { email = "alchemyst@blockmage.dev", name = "Alchemyst" },
+    { email = "opensource@blockmage.dev", name = "Blockmage Ltd" },
+  ]
+
+  maintainers = [
+    { email = "alchemyst@blockmage.dev", name = "Alchemyst" },
   ]
 
   dependencies = [  ]
