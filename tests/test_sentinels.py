@@ -34,7 +34,7 @@ def test_subscription() -> None:
     s4: Callable[..., int] = Sentinel[Callable[..., int]]()
     s5: Callable[..., bytes] = Sentinel[Callable[..., bytes]]()
 
-    assert repr(s1) == '<Sentinel: str>'
+    assert repr(s1) == "<Sentinel: <class 'str'>>"
     assert repr(s2) == '<Sentinel: collections.abc.Callable[..., str]>'
 
     assert s2 is not s4
@@ -77,7 +77,7 @@ def test_hint() -> None:
 def test_str() -> None:
     s1, s2 = Sentinel(), Sentinel(int)
 
-    assert str(s1) == '<Sentinel: typing.Any>'
+    assert str(s1) == '<Sentinel: Any>'
     assert str(s2) == '<Sentinel: int>'
 
     assert str(Sentinel(bytes)) == '<Sentinel: bytes>'
@@ -88,10 +88,10 @@ def test_repr() -> None:
     s1, s2 = Sentinel(), Sentinel(float)
 
     assert repr(s1) == '<Sentinel: typing.Any>'
-    assert repr(s2) == '<Sentinel: float>'
+    assert repr(s2) == "<Sentinel: <class 'float'>>"
 
-    assert repr(Sentinel(bytes)) == '<Sentinel: bytes>'
-    assert repr(Sentinel(object)) == '<Sentinel: object>'
+    assert repr(Sentinel(bytes)) == "<Sentinel: <class 'bytes'>>"
+    assert repr(Sentinel(object)) == "<Sentinel: <class 'object'>>"
 
 
 def test_hash() -> None:
@@ -187,13 +187,8 @@ def test_custom_types() -> None:
         pass
 
     s = Sentinel(Dummy)
-    r = repr(Dummy)
-
-    if r.startswith("<class '") and r.endswith("'>"):
-        r = r[8:-2]
-
     assert s.hint is Dummy
-    assert str(s) == f'<Sentinel: {r}>'
+    assert str(s) == f'<Sentinel: {Dummy.__name__}>'
 
 
 def test_pickle() -> None:
