@@ -2,7 +2,7 @@
 
 ## Linting and Code Quality
 
-### Avoiding Ruff `B008` Warnings
+### Avoiding Ruff `B00N` Warnings
 
 When using mutable types as defaults, linters like Ruff will warn about mutable default arguments.
 `Sentinel`s provide an elegant solution:
@@ -37,19 +37,20 @@ def append_items(items: list[str] = Sentinel(list[str])) -> list[str]:
 ```python
 from typed_sentinels import Sentinel
 
-# Define at module level:
-EMPTY_LIST: list[str] = Sentinel(list[str])
+EMPTY_LIST = Sentinel(list[str])
 
 
 def append_items(items: list[str] = EMPTY_LIST) -> list[str]:
     if not items:
         return []
     return [*items, 'processed']
+```
 
+This is actually fine due the immutability of our tuple here - No complaints! Though, unlesss you have a
+specific reason to do it this way, keep in mind you are going to incur the (likely negligible) overhead of the
+`Sentinel()` call every time your function is invoked.
 
-# Note: This is actually fine due the immutability of our tuple here - No complaints! Though, unlesss you have a
-# specific reason to do it this way, keep in mind you are going to incur the (likely negligible) overhead of the
-# `Sentinel()` call every time your function is invoked. It might add up quick!
+```python
 def add_to_tuple(items: tuple[str, ...] = Sentinel(tuple[str, ...])) -> tuple[str, ...]:
     if not items:
         return ()

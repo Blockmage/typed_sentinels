@@ -4,15 +4,19 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       publish_to:
-        description: 'Publish to (test-pypi, pypi, or skip)'
+        description: 'Publish to (pypi or skip)'
         required: true
-        default: 'test-pypi'
+        default: 'skip'
         type: choice
         options:
-          - test-pypi
           - pypi
           - skip
 
@@ -21,7 +25,38 @@ permissions:
   id-token: write
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6.5.0
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: latest
+
+      - name: Install dependencies
+        run: uv sync --group=test --group=dev
+
+      - name: Run tests
+        run: uv run pytest
+
   build:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' }}
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -34,13 +69,10 @@ jobs:
           enable-cache: true
 
       - name: Set up Python
-        run: uv python install 3.12
+        run: uv python install 3.13
 
       - name: Install dependencies
-        run: uv sync --all-groups
-
-      - name: Run tests
-        run: uv run pytest
+        run: uv sync --group=dev
 
       - name: Build package
         run: uv build
@@ -50,28 +82,6 @@ jobs:
         with:
           name: dist
           path: dist/
-
-  publish-test-pypi:
-    if: |
-      (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_to == 'test-pypi') ||
-      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && contains(github.ref, 'dev'))
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: test-pypi
-      url: https://test.pypi.org/p/typed-sentinels
-
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: dist
-          path: dist/
-
-      - name: Publish to Test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
 
   publish-pypi:
     if: |
