@@ -1,11 +1,6 @@
 name: Test Build and Publish
 
 on:
-  push:
-    tags:
-      - 'v*'
-    branches:
-      - 'dev/*'
   workflow_dispatch:
     inputs:
       publish_to:
