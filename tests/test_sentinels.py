@@ -1,4 +1,5 @@
 # pyright: reportAttributeAccessIssue=none
+# pyright: reportCallIssue=none
 # pyright: reportUnknownArgumentType=none
 # pyright: reportUnknownMemberType=none
 # pyright: reportUnknownVariableType=none
@@ -13,35 +14,32 @@ import pytest
 
 from typed_sentinels import InvalidHintError, Sentinel, SubscriptedTypeError, is_sentinel
 
-
-def test_subscription_affects_hint() -> None:
-    s1 = Sentinel[Callable[..., str]]()
-    s2 = Sentinel(Callable[..., str])
-    s3 = Sentinel[str](str)
-    s4 = Sentinel(str)
-    s5 = Sentinel[str]()
-    s6 = Sentinel()
-
-    assert repr(s1) == repr(s2) == '<Sentinel: collections.abc.Callable[..., str]>'
-    assert s3 is s4
-    assert s5 is not s6
+from .conftest import BatchPyrightRunner, ExpectedType
 
 
 def test_subscription() -> None:
-    s1 = Sentinel[str](str)
-    s2: Callable[..., str] = Sentinel[Callable[..., str]]()
-    s3: Callable[..., bytes] = Sentinel[Callable[..., bytes]]()
-    s4: Callable[..., int] = Sentinel[Callable[..., int]]()
-    s5: Callable[..., bytes] = Sentinel[Callable[..., bytes]]()
+    s1, s2 = Sentinel[str](str), Sentinel[Callable[..., str]]()
 
     assert repr(s1) == "<Sentinel: <class 'str'>>"
     assert repr(s2) == '<Sentinel: collections.abc.Callable[..., str]>'
 
-    assert s2 is not s4
-    assert s3 is s5
+    s3, s4 = Sentinel[Callable[[], int]](), Sentinel[Callable[..., bytes]]()
 
     assert s2 is not s3
-    assert s2 is not s4
+    assert s3 is not s4
+
+
+def test_subscription_affects_hint() -> None:
+    s1, s2 = Sentinel[str](), Sentinel(str)
+
+    assert s1.hint is str
+    assert s1.hint is s2.hint
+    assert s2.hint == s1.hint
+
+    s3 = Sentinel[tuple[dict[str, str], ...]]()
+
+    assert s3.hint != s1.hint
+    assert s3.hint == tuple[dict[str, str], ...]
 
 
 def test_is_sentinel() -> None:
@@ -75,10 +73,10 @@ def test_hint() -> None:
 
 
 def test_str() -> None:
-    s1, s2 = Sentinel(), Sentinel(int)
+    s1, s2 = Sentinel(), Sentinel(tuple[str, int, dict[str, str]])
 
     assert str(s1) == '<Sentinel: Any>'
-    assert str(s2) == '<Sentinel: int>'
+    assert str(s2) == '<Sentinel: tuple[str, int, dict[str, str]]>'
 
     assert str(Sentinel(bytes)) == '<Sentinel: bytes>'
     assert str(Sentinel(object)) == '<Sentinel: object>'
@@ -90,13 +88,12 @@ def test_repr() -> None:
     assert repr(s1) == '<Sentinel: typing.Any>'
     assert repr(s2) == "<Sentinel: <class 'float'>>"
 
-    assert repr(Sentinel(bytes)) == "<Sentinel: <class 'bytes'>>"
     assert repr(Sentinel(object)) == "<Sentinel: <class 'object'>>"
+    assert repr(Sentinel(tuple[str, int, dict[str, str]])) == '<Sentinel: tuple[str, int, dict[str, str]]>'
 
 
 def test_hash() -> None:
-    s1, s2 = Sentinel(), Sentinel()
-    s3, s4 = Sentinel(bytes), Sentinel(str)
+    s1, s2, s3, s4 = Sentinel(), Sentinel(), Sentinel(bytes), Sentinel(str)
 
     assert hash(s1) == hash(s2)
     assert hash(s3) != hash(s4)
@@ -107,8 +104,7 @@ def test_hash() -> None:
 
 
 def test_equality() -> None:
-    s1, s2 = Sentinel(), Sentinel()
-    s3, s4 = Sentinel(bytes), Sentinel(str)
+    s1, s2, s3, s4 = Sentinel(), Sentinel(), Sentinel(bytes), Sentinel(str)
 
     assert s1 == s2
     assert s3 != s4
@@ -122,7 +118,7 @@ def test_reduce() -> None:
     s = Sentinel(bytes)
     reduce_func, reduce_args = s.__reduce__()
 
-    assert reduce_func(*reduce_args) is s  # pyright: ignore[reportCallIssue]
+    assert reduce_func(*reduce_args) is s
 
 
 def test_copy() -> None:
@@ -140,10 +136,21 @@ def test_slots() -> None:
 
 
 def test_bool() -> None:
-    s1, s2 = Sentinel(), Sentinel(complex)
+    sntl_1, sntl_2 = Sentinel(), Sentinel(complex)
 
-    assert bool(s1) is False
-    assert bool(not s1 and not s2)
+    assert bool(sntl_1) is False
+    assert bool(not sntl_1 and not sntl_2)
+
+    result = False
+
+    if sntl_1:  # pragma: no cover
+        result = True
+    if sntl_2:  # pragma: no cover
+        result = True
+    if sntl_1 or sntl_2:  # pragma: no cover
+        result = True
+
+    assert result is False
 
 
 def test_hint_mismatch_raises() -> None:
@@ -158,7 +165,19 @@ def test_hint_is_sentinel_raises() -> None:
         Sentinel(Sentinel)
 
 
-def test_none_hint_raises() -> None:
+def test_hint_is_ellipses_raises() -> None:
+    with pytest.raises(InvalidHintError):
+        Sentinel(...)
+
+
+def test_hint_is_true_or_false_raises() -> None:
+    with pytest.raises(InvalidHintError):
+        Sentinel(True)  # noqa: FBT003
+    with pytest.raises(InvalidHintError):
+        Sentinel(False)  # noqa: FBT003
+
+
+def test_hint_is_none_raises() -> None:
     with pytest.raises(InvalidHintError):
         Sentinel(None)
 
@@ -176,19 +195,43 @@ def test_sentinel_is_final() -> None:
 
 
 def test_weakref() -> None:
-    s = Sentinel(str)
-    ref = weakref.ref(s)
+    sntl = Sentinel(str)
+    ref = weakref.ref(sntl)
 
-    assert ref() is s
+    assert ref() is sntl
 
 
 def test_custom_types() -> None:
     class Dummy:
         pass
 
-    s = Sentinel(Dummy)
-    assert s.hint is Dummy
-    assert str(s) == f'<Sentinel: {Dummy.__name__}>'
+    sntl = Sentinel(Dummy)
+    assert sntl.hint is Dummy
+    assert str(sntl) == f'<Sentinel: {Dummy.__name__}>'
+
+
+def test_complex_custom_types(pyright_runner: BatchPyrightRunner) -> None:
+    """Test that complex custom types work both at runtime and static analysis."""
+
+    class Dummy:
+        def __init__(self, req_param1: str, req_param2: tuple[dict[str, str], ...]) -> None:
+            if not req_param1 or not req_param2:
+                raise RuntimeError
+
+    sntl = Sentinel(Dummy)
+
+    assert sntl.hint is Dummy
+    assert is_sentinel(sntl, Dummy)
+    assert str(sntl) == '<Sentinel: Dummy>'
+
+    success, message = pyright_runner.check_type_expectation(
+        ExpectedType(
+            'complex_custom_sentinel',
+            'ComplexDummy',
+            lambda x: is_sentinel(x) and x.hint.__name__ == 'ComplexDummy',
+        )
+    )
+    assert success, f'Static type test failed: {message}'
 
 
 def test_pickle() -> None:
@@ -213,12 +256,28 @@ def test_pickle() -> None:
 
 
 def test_delattr() -> None:
-    s = Sentinel()
-    with pytest.raises(AttributeError, match=f'Cannot delete attributes of {s!r}'):
-        del s.hint
+    sntl = Sentinel()
+    with pytest.raises(AttributeError, match=f'Cannot delete attributes of {sntl!r}'):
+        del sntl.hint
 
 
 def test_setattr() -> None:
-    s = Sentinel()
-    with pytest.raises(AttributeError, match=f'Cannot modify attributes of {s!r}'):
-        s.hint = bytes
+    sntl = Sentinel()
+    with pytest.raises(AttributeError, match=f'Cannot modify attributes of {sntl!r}'):
+        sntl.hint = bytes
+
+
+def test_called_sentinel_returns_self() -> None:
+    sntl = Sentinel()
+    also_sntl = sntl()
+
+    assert also_sntl is sntl
+    assert sntl == also_sntl
+
+
+def test_getitem_returns_self() -> None:
+    sntl = Sentinel()
+    also_sntl = sntl['anything']
+
+    assert also_sntl is sntl
+    assert sntl == also_sntl

@@ -1,7 +1,7 @@
-# pyright: reportUnknownMemberType=none
-# pyright: reportUnknownVariableType=none
 # pyright: reportUnknownArgumentType=none
+# pyright: reportUnknownMemberType=none
 # pyright: reportUnknownParameterType=none
+# pyright: reportUnknownVariableType=none
 
 import threading
 import time
@@ -368,6 +368,7 @@ class TestSentinelThreading:
 
             for _ in range(iterations):
                 s = Sentinel(hint_type)
+                # Note: This is showing as "unreachable code," however it's not clear why @Alchemyst0x 2025-09-02
                 sentinels.append(s)
                 unique_ids.add(id(s))
 
