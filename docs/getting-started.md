@@ -10,57 +10,22 @@ pip install typed-sentinels
 uv add typed-sentinels
 ```
 
-## Your First Sentinel
-
-The most basic use case for `Sentinel`:
-
-```python
-from typed_sentinels import Sentinel
-
-# Create a sentinel that appears to be a string to the type checker.
-UNSET: str = Sentinel(str)
-
-
-def greet(name: str = UNSET) -> str:
-    if not name:  # Sentinels are always falsy.
-        return 'Hello, Anonymous!'
-    return f'Hello, {name}!'
-
-
-print(greet())  # "Hello, Anonymous!"
-print(greet('Alice'))  # "Hello, Alice!"
-```
-
 ## Basic Patterns
 
-### Module-Level `Sentinel` Instances (Recommended)
-
-Create `Sentinel` instances at the module level for best performance:
+Create `Sentinel` instances at the module level:
 
 ```python
 from typed_sentinels import Sentinel
 
-# Define once, use everywhere.
-UNSET_STR: str = Sentinel(str)
-UNSET_INT: int = Sentinel(int)
-
-# If not annotated, these will just appear as `typing.Any`.
-UNSET_LIST: list[str] = Sentinel(list[str])
+# Define once, use everywhere
+SNTL_STR = Sentinel(str)
 
 
-def process_name(name: str = UNSET_STR) -> str:
+def process_name(name: str = SNTL_STR) -> str:
     if not name:
         return 'Anonymous'
     return name.title()
-
-
-def process_count(count: int = UNSET_INT) -> int:
-    if count is UNSET_INT:
-        return 0
-    return count
 ```
-
-### Type Subscription Syntax
 
 You can also parameterize `Sentinel` via subscription notation:
 
@@ -105,16 +70,19 @@ While `None` works for many cases, `Sentinel` offers advantages:
     require parameterization. To the type-checker, `Sentinel(CustomType)` is seen as an *instance* of
     `CustomType` without requiring an actual instance to exist.
 
+With `None`: Type-checker sees two distinct types possible:
+
 ```python
-# With None: Type-checker sees two distinct types possible.
 def process_optional(value: str | None = None) -> str:
     if value is None:
         return 'default'
     return value
+```
 
+With `Sentinel`: Type checker only sees a `str` instance:
 
-# With Sentinel: Type checker only sees a `str` instance.
-UNSET: str = Sentinel(str)
+```python
+UNSET = Sentinel(str)
 
 
 def process_sentinel(value: str = UNSET) -> str:

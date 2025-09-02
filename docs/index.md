@@ -1,22 +1,22 @@
 # typed-sentinels
 
-Statically-typed sentinel objects with singleton qualities for Python 3.12+.
+Statically-typed sentinel objects with singleton qualities.
 
 ![Example of Sentinel class mimicking parameterized type](./images/sentinel.png)
 
-## Why typed-sentinels?
+## Why `typed-sentinels`?
 
-`Sentinel` instances provide type-safe placeholder objects that maintain singleton behavior.
-They're perfect for default parameter values when `None` isn't appropriate or when you need type safety.
+`Sentinel` instances provide unique placeholder objects that maintain singleton behavior for a given type. They are
+particularly well-suited for use with types requiring parameters which are only available at runtime, where creating
+a default instance of the type may not be possible in advance, but the structural contract of the type is otherwise
+guaranteed to be fulfilled once present.
 
 ### Key Benefits
 
-- **Type Safety**: `Sentinel` objects appear as their target type to static type checkers.
-- **Singleton Behavior**: Only one instance exists per type hint.
-- **Thread Safety**: Safe for concurrent access across multiple threads.
-- **Immutability**: Cannot be modified after creation.
-- **Always Falsy**: Natural `if not value:` patterns.
+- **Type safety**: `Sentinel` objects appear as their target type to static type checkers.
 - **Versatile**: Emulate complex, user-defined types, even those which require parameters on instantiation.
+- **Natural usage**: `Sentinel` instances are always falsey, enabling natural `if not: ...` patterns.
+- **Lightweight singleton**: `Sentinel` objects are incredibly lightweight, with only one instance per assigned type.
 
 ## Installation
 
@@ -24,47 +24,37 @@ They're perfect for default parameter values when `None` isn't appropriate or wh
 pip install typed-sentinels
 ```
 
-## Quick Example
+## Examples
+
+Basic usage:
 
 ```python
 from typed_sentinels import Sentinel
 
-# Create a sentinel that appears to be a string to the type checker
-UNSET: str = Sentinel(str)
+SNTL = Sentinel(str)  # Appears to be a string to the type checker
 
 
-def process_data(value: str = UNSET) -> str:
-    # Sentinels are always falsy
+def process_data(value: str = SNTL) -> str:
     if not value:
         return 'No value provided'
     return f'Processing: {value}'
-
-
-# Type-safe usage
-result = process_data()  # "No value provided"
-result = process_data('demo123')  # "Processing: demo123"
 ```
-
-## Advanced Example
 
 Perfect for types requiring runtime parameters:
 
 ```python
-from typed_sentinels import Sentinel
-
-
 class DatabaseConfig:
     def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
 
 
-# Appears to the type-checker as an instance of `DatabaseConfig`
-DEFAULT_CONFIG: DatabaseConfig = Sentinel(DatabaseConfig)
+# Appears to the type-checker as an *instance* of `DatabaseConfig`
+SNTL_CFG = Sentinel(DatabaseConfig)
 
 
-def connect(config: DatabaseConfig = DEFAULT_CONFIG) -> str:
-    if config is DEFAULT_CONFIG:
+def connect(config: DatabaseConfig = SNTL_CFG) -> str:
+    if config is SNTL_CFG:
         config = DatabaseConfig('localhost', 5432)
     return f'Connected to {config.host}:{config.port}'
 ```
@@ -78,6 +68,6 @@ S1 = Sentinel(dict[str, Any])
 S2 = Sentinel(dict[str, Any])
 S3 = Sentinel(dict[str, bytes])
 
-assert S1 is S2  # True - same type, same instance
-assert S2 is not S3  # True - different types, different instances
+assert S1 is S2  # True - Same type, same instance
+assert S2 is not S3  # True - Different types, different instances
 ```
