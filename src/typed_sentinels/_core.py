@@ -22,7 +22,7 @@ _OBJECT = object()
 
 @final
 class Sentinel:
-    """Statically-typed sentinel objects with singleton qualities.
+    """Statically-typed sentinel object with singleton qualities.
 
     `Sentinel` instances provide unique placeholder objects that maintain singleton behavior for a given type hint. They
     are particularly useful as default parameter values when `None` is not appropriate or when type safety is desired.
@@ -46,9 +46,8 @@ class Sentinel:
         return self._hint
 
     def __class_getitem__(cls, key: Any) -> Any:
-        with cls._cls_lock:
-            cls._cls_hint = key
-            return cls
+        cls._cls_hint = key
+        return cls
 
     def __new__(cls, hint: Any = _OBJECT, /) -> Any:
         """Create or retrieve a `Sentinel` instance for the given `hint` type.
