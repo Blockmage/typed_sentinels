@@ -1,6 +1,6 @@
 # typed-sentinels
 
-Statically-typed sentinel objects with singleton qualities (for Python 3.12+).
+Statically-typed sentinel objects with singleton qualities.
 
 ## Installation
 
