@@ -18,7 +18,7 @@ exclude: |
 repos:
   # -------------------------------- [ biome ] ---------------------------------
   - repo: https://github.com/biomejs/pre-commit
-    rev: v2.2.0
+    rev: v2.2.4
     hooks:
       - id: biome-check
         additional_dependencies: ["@biomejs/biome@2.0.6"]
@@ -121,7 +121,7 @@ repos:
 
   # ------------------------------- [ pyright ] --------------------------------
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.403
+    rev: v1.1.405
     hooks:
       - id: pyright
         stages: [pre-push]
@@ -154,7 +154,7 @@ repos:
 
   # --------------------------------- [ ruff ] ---------------------------------
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.12.9
+    rev: v0.13.0
     hooks:
       - id: ruff-check
         types_or: [python, pyi]
