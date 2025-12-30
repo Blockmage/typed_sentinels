@@ -2,7 +2,7 @@
 
 import pytest
 
-from tests.conftest import EXPECTED_TYPES, BatchPyrightRunner, ExpectedType
+from .conftest import EXPECTED_TYPES, BatchPyrightRunner, ExpectedType
 
 
 class TestPyrightIntegration:

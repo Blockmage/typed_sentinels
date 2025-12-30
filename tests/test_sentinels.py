@@ -155,31 +155,41 @@ def test_bool() -> None:
 
 def test_hint_mismatch_raises() -> None:
     with pytest.raises(SubscriptedTypeError):
-        Sentinel[str](bool)
+        # (variable) _s: Any
+        _s = Sentinel[str](bool)
 
 
 def test_hint_is_sentinel_raises() -> None:
     with pytest.raises(InvalidHintError):
-        Sentinel(Sentinel())
+        # (variable) _s: Never
+        _s = Sentinel(Sentinel())
     with pytest.raises(InvalidHintError):
-        Sentinel(Sentinel)
+        # This will raise correctly, however:
+        # (variable) _s: Sentinel[Any]
+        # It doesn't seem to be possible to indicate that this should be `Never` without clobbering `type` as well, due
+        # to the way that `type[Sentinel]` is evidently interpreted to be `type` by the type checker.
+        _s = Sentinel(Sentinel)
 
 
 def test_hint_is_ellipses_raises() -> None:
     with pytest.raises(InvalidHintError):
-        Sentinel(...)
+        # (variable) _s: Never
+        _s = Sentinel(...)
 
 
 def test_hint_is_true_or_false_raises() -> None:
     with pytest.raises(InvalidHintError):
-        Sentinel(True)  # noqa: FBT003
+        # (variable) _s: Never
+        _s = Sentinel(True)  # noqa: FBT003
     with pytest.raises(InvalidHintError):
-        Sentinel(False)  # noqa: FBT003
+        # (variable) _s: Never
+        _s = Sentinel(False)  # noqa: FBT003
 
 
 def test_hint_is_none_raises() -> None:
     with pytest.raises(InvalidHintError):
-        Sentinel(None)
+        # (variable) _s: Never
+        _s = Sentinel(None)
 
 
 def test_other_types_not_equal() -> None:
@@ -202,8 +212,7 @@ def test_weakref() -> None:
 
 
 def test_custom_types() -> None:
-    class Dummy:
-        pass
+    class Dummy: ...
 
     sntl = Sentinel(Dummy)
     assert sntl.hint is Dummy
