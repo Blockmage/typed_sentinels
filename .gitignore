@@ -1,9 +1,24 @@
 *
 !*/
 
-# ================================ Not Ignored =================================
+#
+##
+### ========= Add paths specific to this project here =========
 
-# === Git/GitHub ===
+# --------- Top-level directories
+!/.vscode/**/*
+#!/reports/**/*
+!/scripts/**/*
+!/src/**/*
+!/tests/**/*
+
+# --------- Documentation
+!/docs/**/*.md
+!/docs/**/*.png
+
+### ===========================================================
+
+# --------- Git / GitHub
 !.git-blame-ignore-revs
 !.gitattributes
 !.github/**/*
@@ -12,7 +27,7 @@
 !.gitmodules
 !.keep
 
-# === Common Project Files ===
+# --------- Common
 !ATTRIBUTION*
 !CHANGELOG*
 !CODE_OF_CONDUCT*
@@ -25,43 +40,21 @@
 !SECURITY*
 !SUPPORT*
 
-# === Top-Level Directories ===
-!/.vscode/**/*
-!/app/**/*
-!/bases/**/*
-!/bin/**/*
-!/components/**/*
-!/docker/**/*
-!/modules/*/**
-!/notebooks/**/*
-!/projects/**/*
-!/public/**/*
-!/scripts/**/*
-!/shell/**/*
-!/src/**/*
-!/submodules/**/*
-!/templates/**/*
-!/test/**/*
-!/tests/**/*
-!/workers/**/*
-
-# === Documentation ===
-!/docs/**/*.md
-!/docs/**/*.png
-
-# === Generic 'ignore', 'rc', and 'config' Files ===
+# --------- Generic
 !*.config.*
 !.*ignore
 !.*rc
 !.*rc.*
 
-# === cSpell Wordlists (Custom) ===
+# --------- VS Code
+!.vscode/*.json
+!.vscode/*.jsonc
+
+# --------- Custom cSpell wordlists
 !.cspell.txt
 !cspell.txt
 
-# ------------------------ Specific Configuration Files ------------------------
-
-# === Commitizen ===
+# --------- Commitizen
 # https://github.com/commitizen-tools/commitizen
 !.cz.json
 !.cz.toml
@@ -70,143 +63,145 @@
 !cz.toml
 !cz.yaml
 
-# === agebox/age-Encrypted Files ===
+# --------- agebox / age-encrypted files
 # https://github.com/slok/agebox
 !*.age
 !*.agebox
 !.ageboxreg.*
 
-# === pre-commit ===
+# --------- pre-commit
 # https://github.com/pre-commit/pre-commit
 !.pre-commit-config.*
 !.pre-commit-hooks.*
 
-# === MarkdownLint ===
+# --------- MarkdownLint
 # https://github.com/DavidAnson/markdownlint
 !.markdownlint-cli2.*
 !.markdownlint.*
 
-# === yamlfmt ===
+# --------- yamlfmt
 # https://github.com/google/yamlfmt
-!.yamlfmt*
+!.yamlfmt.*
+!yamlfmt.*
 
-# === Cargo/Clippy ===
+# --------- Cargo / Clippy
 # https://github.com/rust-lang/cargo
 !.clippy.toml
 !Cargo.lock
 !Cargo.toml
 !clippy.toml
 
-# === EditorConfig ===
+# --------- EditorConfig
 # https://github.com/editorconfig/editorconfig
 !.editorconfig
 
-# === pyproject.toml ===
+# --------- Python / pyproject.toml
 # https://packaging.python.org/en/latest/guides/writing-pyproject-toml
+!.python-version
 !pyproject.toml
 
-# === Flake8 ===
+# --------- Flake8
 # https://github.com/PyCQA/flake8
 !.flake8
 
-# === tox ===
+# --------- tox
 # https://github.com/tox-dev/tox
 !tox.ini
 
-# === Setuptools ===
+# --------- Setuptools
 # https://github.com/pypa/setuptools
 !setup.cfg
 !setup.py
 
-# === isort ===
+# --------- isort
 # https://github.com/PyCQA/isort
 !.isort.cfg
 
-# === Pyright/Pylance ===
+# --------- Pyright / Pylance
 # https://github.com/microsoft/pyright
 !pyrightconfig.json
 
-# === ruff ===
+# --------- Ruff
 # https://github.com/astral-sh/ruff
 !.ruff.toml
 !ruff.toml
 
-# === uv ===
+# --------- uv
 # https://github.com/astral-sh/uv
 !uv.lock
 !uv.toml
 
-# === TypeScript ===
+# --------- TypeScript
 # https://github.com/microsoft/TypeScript
 !tsconfig.*
 
-# === Node.js/npm ===
+# --------- Node.js
 # https://github.com/npm/cli
 !package.json
 !package.yaml
 
-# === Bun ===
+# --------- Bun
 # https://github.com/oven-sh/bun
 !bun.lock
 
-# === Deno ===
+# --------- Deno
 # https://github.com/denoland/deno
 !deno.json
 !deno.jsonc
 
-# === ESLint ===
+# --------- ESLint
 # https://github.com/eslint/eslint
 !eslint.config.*
 !eslintrc.*
 
-# === MkDocs ===
+# --------- MkDocs
 # https://github.com/mkdocs/mkdocs
 !mkdocs.*
 
-# === pnpm ===
+# --------- pnpm
 # https://github.com/pnpm/pnpm
 !pnpm-*.*
 !pnpmfile.*
 
-# === Prettier ===
+# --------- Prettier
 # https://github.com/prettier/prettier
 !.prettierrc
 !.prettierrc.*
 
-# === Stylelint ===
+# --------- Stylelint
 # https://github.com/stylelint/stylelint
 !.stylelintrc
 !.stylelintrc.*
 
-# === Biome ===
+# --------- Biome
 # https://github.com/biomejs/biome
 !biome.json*
 
-# === Taplo ===
+# --------- Taplo
 # https://github.com/tamasfe/taplo
 !taplo.toml
 
-# === GitLeaks ===
+# --------- GitLeaks
 # https://github.com/gitleaks
 !.gitleaksignore
 !gitleaks.toml
 
-# === Hadolint ===
+# --------- Hadolint
 # https://github.com/hadolint/hadolint
 !.hadolint.y*ml
 !hadolint.yaml
 
-# === DevEnv (Nix) ===
+# --------- devenv
 # https://github.com/cachix/devenv
 !devenv.lock
 !devenv.nix
 !devenv.yaml
 
-# === DevContainers ===
+# --------- DevContainers
 # https://github.com/devcontainers
 !.devcontainer/**/*
 
-# === Docker/Docker Compose ===
+# --------- Docker
 # https://github.com/docker
 !*-compose.y*ml
 !*-docker-compose.y*ml
@@ -217,13 +212,18 @@
 !compose.y*ml
 !docker-compose.y*ml
 
-# === Misc/Others/etc. ===
-!.python-version
-!.vscode-test.mjs
-!/data/**/*.agebox
-!workspace.toml
+# --------- Polylith
+# https://davidvujic.github.io/python-polylith-docs/workspace/
+!/bases/**/*
+!/components/**/*
+!/projects/**/*
 
-# =============================== Always Ignored ===============================
+# --------- Brewfile
+# https://docs.brew.sh/Brew-Bundle-and-Brewfile
+!.Brewfile
+!Brewfile
+
+# =================== Ignored at all levels ===================
 $RECYCLE.BIN/
 *$py.class
 *.*[Cc][Aa][Cc][Hh][Ee]*
@@ -296,8 +296,7 @@ $RECYCLE.BIN/
 .devenv*
 .directory
 .direnv
-.envrc
-.fseventsd
+.fseventsd/
 .fuse_hidden*
 .history/
 .htaccess
@@ -310,7 +309,8 @@ $RECYCLE.BIN/
 .npm/
 .nuxt/
 .nvm/
-.secret?/
+.secret/
+.secrets/
 .terraformrc
 .venv/
 .vercel/
@@ -321,13 +321,13 @@ Network Trash Folder/
 Temporary Items
 Thumbs.*
 [Dd]esktop.ini
-[Tt]emp
 [Tt]emporary*
 [Tt]rash*
 [Vv]irtual[Ee]nv/
 __pycache__/
 credentials
 devenv.local.nix
+devenv.local.yaml
 dist/
 docker/**/*.conf
 docker/**/*config*
@@ -347,7 +347,6 @@ kubeconfig
 next-env.d.ts
 node_modules/
 override.tf*
-secret?/
 secring.*
 styled-system-studio/
 styled-system/
@@ -358,6 +357,7 @@ venv/
 web_modules/
 wheels/
 
-# ================================= Overrides ==================================
+# ========================= Overrides =========================
 !*example*
-!/examples/*
+!.envrc
+!/examples/**/*

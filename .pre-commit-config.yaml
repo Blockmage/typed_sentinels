@@ -1,7 +1,7 @@
 fail_fast: true
 
 default_language_version:
-  python: "3.12"
+  python: "3.13"
 
 default_install_hook_types:
   - commit-msg
@@ -18,7 +18,7 @@ exclude: |
 repos:
   # -------------------------------- [ biome ] ---------------------------------
   - repo: https://github.com/biomejs/pre-commit
-    rev: v2.2.4
+    rev: v2.3.10
     hooks:
       - id: biome-check
         additional_dependencies: ["@biomejs/biome@2.0.6"]
@@ -26,7 +26,7 @@ repos:
 
   # --------------- [ check-github-workflows | check-taskfile ] ----------------
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.33.3
+    rev: 0.36.0
     hooks:
       - id: check-github-workflows
         args: [--verbose]
@@ -34,7 +34,7 @@ repos:
 
   # ------------------------------ [ commitizen ] ------------------------------
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.8.3
+    rev: v4.11.0
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -43,7 +43,7 @@ repos:
 
   # -------------------------------- [ cspell ] --------------------------------
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.2.0
+    rev: v9.4.0
     hooks:
       - id: cspell
         name: "check spelling: workspace files"
@@ -68,37 +68,15 @@ repos:
 
   # ---------------------------- [ gitignore-tidy ] ----------------------------
   - repo: https://github.com/lorenzwalthert/gitignore-tidy
-    rev: 0.1.2
+    rev: 0.1.3
     hooks:
       - id: tidy-gitignore
 
   # ------------------------------- [ gitleaks ] -------------------------------
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.28.0
+    rev: v8.30.0
     hooks:
       - id: gitleaks
-
-  # ------------------------------- [ mdformat ] -------------------------------
-  - repo: https://github.com/hukkin/mdformat
-    rev: 0.7.22
-    hooks:
-      - id: mdformat
-        exclude: api.md
-        additional_dependencies:
-          - mdformat-config
-          - mdformat-footnote
-          - mdformat-frontmatter
-          - mdformat-gfm
-          - mdformat-gfm-alerts
-          - mdformat-mkdocs
-          - mdformat-pyproject
-          - mdformat-ruff
-          - mdformat-shfmt
-          - mdformat-simple-breaks
-          - mdformat-tables
-          - mdformat-web
-          - mdformat-wikilink
-          - ruff
 
   # ------------------------------ [ pre-commit ] ------------------------------
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -121,7 +99,7 @@ repos:
 
   # ------------------------------- [ pyright ] --------------------------------
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.405
+    rev: v1.1.407
     hooks:
       - id: pyright
         stages: [pre-push]
@@ -154,7 +132,7 @@ repos:
 
   # --------------------------------- [ ruff ] ---------------------------------
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.13.0
+    rev: v0.14.10
     hooks:
       - id: ruff-check
         types_or: [python, pyi]
@@ -178,6 +156,6 @@ repos:
 
   # ------------------------------- [ yamlfmt ] --------------------------------
   - repo: https://github.com/google/yamlfmt
-    rev: v0.17.2
+    rev: v0.20.0
     hooks:
       - id: yamlfmt
