@@ -7,9 +7,8 @@
 }: {
   packages = [
     pkgs.git
-    pkgs.nil
-    pkgs.pyright
     pkgs.nodejs_24
+    pkgs.pyright
   ];
 
   treefmt = import ./.config/treefmt.nix {inherit pkgs lib;};
