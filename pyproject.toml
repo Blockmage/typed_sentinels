@@ -88,37 +88,6 @@
   wrap-descriptions       = 120
   wrap-summaries          = 120
 
-# ------------------------------- tool: pyright --------------------------------
-[tool.pyright]
-  include = [ ".", "src", "tests" ]
-
-  exclude = [
-    ".git/**/*",
-    ".venv/**/*",
-    "docs/**/*",
-    "examples/**/*",
-    "images/**/*",
-    "reports/**/*",
-  ]
-
-  pythonPlatform   = "Linux"
-  pythonVersion    = "3.13"
-  typeCheckingMode = "strict"
-  venv             = ".venv"
-  venvPath         = "."
-
-  analyzeUnannotatedFunctions = true
-  deprecateTypingAliases      = true
-  reportMissingTypeStubs      = true
-  strictDictionaryInference   = false
-  strictListInference         = true
-  strictSetInference          = true
-  useLibraryCodeForTypes      = true
-
-  executionEnvironments = [
-    { pythonVersion = "3.13", root = "." },
-  ]
-
 # -------------------------------- tool: pytest --------------------------------
 [tool.pytest.ini_options]
   addopts = [

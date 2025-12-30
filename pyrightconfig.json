@@ -1,0 +1,23 @@
+{
+	"include": ["src", "docs", "tests"],
+
+	"pythonPlatform": "Linux",
+	"pythonVersion": "3.13",
+	"typeCheckingMode": "strict",
+
+	"venv": "venv",
+	"venvPath": ".devenv/state/",
+
+	"analyzeUnannotatedFunctions": true,
+	"deprecateTypingAliases": true,
+	"reportMissingTypeStubs": true,
+	"strictDictionaryInference": false,
+	"strictListInference": true,
+	"strictSetInference": true,
+	"useLibraryCodeForTypes": true,
+
+	"executionEnvironments": [
+		{ "root": "docs", "extraPaths": ["./src"] },
+		{ "root": ".", "extraPaths": ["./src"] }
+	]
+}
