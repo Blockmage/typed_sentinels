@@ -6,18 +6,19 @@ from typing import Any
 from typed_sentinels import Sentinel
 
 
-def create_sentinel_worker(thread_id, sentinel_type, iterations=100):
+def create_sentinel_worker(
+    thread_id: int, sentinel_type: Any, iterations: int = 100
+) -> tuple[int, int, list[Sentinel]]:
     """Create `Sentinel` instances in a tight loop."""
 
-    local_instances = []
-    local_instance_ids = set()
+    local_instances: list[Sentinel] = []
+    local_instance_ids: set[int] = set()
 
     for i in range(iterations):
         s = Sentinel(sentinel_type)
         local_instances.append(s)
         local_instance_ids.add(id(s))
 
-        # Occasionally release some references to test cleanup
         if i % 20 == 0 and local_instances:
             local_instances.pop(0)
 
@@ -26,11 +27,12 @@ def create_sentinel_worker(thread_id, sentinel_type, iterations=100):
 
 def run_1() -> None:
     print('=== Test 1: Multiple threads creating Sentinel(str) ===')
+
     with ThreadPoolExecutor(max_workers=10) as executor:
         futures = [executor.submit(create_sentinel_worker, i, str, 50) for i in range(10)]
 
-        all_instances = []
-        results = []
+        all_instances: list[Sentinel] = []
+        results: list[tuple[int, int]] = []
 
         for future in as_completed(futures):
             thread_id, unique_ids, instances = future.result()
@@ -46,12 +48,13 @@ def run_1() -> None:
 
 def run_2() -> None:
     print('\n=== Test 2: Multiple threads with different types ===')
+
     types_to_test = [str, int, list, dict, set, complex, range, dict[str, str], tuple[bytes, ...], Callable[..., Any]]
 
     with ThreadPoolExecutor(max_workers=len(types_to_test)) as executor:
         futures = [executor.submit(create_sentinel_worker, i, typ, 30) for i, typ in enumerate(types_to_test)]
 
-        type_results = {}
+        type_results: dict[Any, tuple[int, list[Sentinel]]] = {}
 
         for future in as_completed(futures):
             thread_id, unique_ids, instances = future.result()
@@ -60,7 +63,6 @@ def run_2() -> None:
 
         print(f'Cache size with {len(types_to_test)} types: {len(Sentinel._cls_cache)}')
 
-        # Verify each type has exactly one unique instance across all threads
         for typ, (unique_ids, instances) in type_results.items():
             all_ids_for_type = {id(inst) for inst in instances}
             print(f'{typ.__name__}: {len(all_ids_for_type)} unique instance(s), saw {unique_ids} unique ID(s)')
@@ -69,11 +71,10 @@ def run_2() -> None:
 def run_3() -> None:
     print('\n=== Test 3: Concurrent creation and deletion ===')
 
-    def create_and_delete_worker(iterations=50):
+    def create_and_delete_worker(iterations: int = 50):
         for i in range(iterations):
             Sentinel(str)
             if i % 10 == 0:
-                # Force some garbage collection pressure
                 gc.collect()
 
     with ThreadPoolExecutor(max_workers=5) as executor:
@@ -84,7 +85,7 @@ def run_3() -> None:
     print(f'Cache size after concurrent create/delete: {len(Sentinel._cls_cache)}')
 
 
-def run_4_cleanup() -> None:
+def cleanup() -> None:
     gc.collect()
     print(f'Final cache size after cleanup: {len(Sentinel._cls_cache)}')
 
@@ -93,4 +94,4 @@ if __name__ == '__main__':
     run_1()
     run_2()
     run_3()
-    run_4_cleanup()
+    cleanup()
