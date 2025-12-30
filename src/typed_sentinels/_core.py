@@ -34,7 +34,7 @@ class Sentinel:
     --------
     Basic usage:
 
-    ```py
+    ```python
     from typed_sentinels import Sentinel
 
     SNTL = Sentinel()                         # Same as `typing.Any`
@@ -49,7 +49,7 @@ class Sentinel:
 
     To the type-checker, `Sentinel` objects are indistinguishable from an instance of the assigned type:
 
-    ```py
+    ```python
     from typing import reveal_type
 
     class Custom:
@@ -68,7 +68,7 @@ class Sentinel:
 
     This even works for complex types like `Callable`:
 
-    ```py
+    ```python
     CALLABLE_SNTL = Sentinel[Callable[..., str]]()
     reveal_type(CALLABLE_SNTL)  # Type of "CALLABLE_SNTL" is "(...) -> str"
     ```
