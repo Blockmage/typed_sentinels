@@ -1,5 +1,5 @@
 {
-	"include": ["src", "docs", "tests", "scripts"],
+	"include": ["src", "docs", "tests", "scripts", "examples"],
 
 	"pythonPlatform": "Linux",
 	"pythonVersion": "3.13",
@@ -17,6 +17,7 @@
 	"useLibraryCodeForTypes": true,
 
 	"executionEnvironments": [
+		{ "root": "examples", "extraPaths": ["./src"] },
 		{ "root": "scripts", "extraPaths": ["./src"] },
 		{ "root": "docs", "extraPaths": ["./src"] },
 		{ "root": ".", "extraPaths": ["./src"] }

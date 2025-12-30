@@ -91,9 +91,9 @@
     "-vv",
   ]
 
-  norecursedirs = [ ".venv" ]
+  norecursedirs = [ ".devenv" ]
   python_files  = [ "test_*.py" ]
-  testpaths     = [ "." ]
+  testpaths     = [ "tests" ]
 
 # ---------------------------------- tool: uv ----------------------------------
 [tool.uv]
