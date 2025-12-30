@@ -34,51 +34,43 @@ class Sentinel:
     --------
     Basic usage:
 
-    ```
+    ```py
     from typed_sentinels import Sentinel
 
+    SNTL = Sentinel()                         # Same as `typing.Any`
+    BYTES_SNTL = Sentinel(bytes)              # Same as `bytes`
+    TUPLE_SNTL = Sentinel[tuple[str, ...]]()  # Same as `tuple[str, ...]`
 
-    SNTL = Sentinel()  # Same as `typing.Any`
-    SNTL_BYTES = Sentinel(bytes)  # Same as `bytes`
-    SNTL_TUPLE = Sentinel[tuple[str, ...]]()  # Same as `tuple[str, ...]`
-
-
-    assert SNTL is not SNTL_BYTES  # True
-    assert Sentinel() is SNTL  # True - `Sentinel` objects are singletons specific to the assigned type
-    assert Sentinel(tuple[str, ...]) is SNTL_TUPLE  # True
-    assert Sentinel(tuple[bytes, ...]) is not SNTL_TUPLE  # True
+    assert SNTL is not BYTES_SNTL                         # True
+    assert Sentinel() is SNTL                             # True
+    assert Sentinel(tuple[str, ...]) is TUPLE_SNTL        # True
+    assert Sentinel(tuple[bytes, ...]) is not TUPLE_SNTL  # True
     ```
 
+    To the type-checker, `Sentinel` objects are indistinguishable from an instance of the assigned type:
 
-    `Sentinel` objects are indistinguishable from an instance of the assigned type to the type-checker:
-
-    ```
+    ```py
     from typing import reveal_type
-
 
     class Custom:
         def __init__(self, req_str: str, req_bytes: bytes) -> None:
             if not req_str or not req_bytes:
                 raise ValueError
 
+    CUSTOM_SNTL = Sentinel(Custom)
+    reveal_type(CUSTOM_SNTL)  # Revealed type is `Custom` -> Runtime type is `Sentinel`
 
-    SNTL_CUSTOM = Sentinel(Custom)
-    reveal_type(SNTL_CUSTOM)  # Revealed type is `Custom` -> Runtime type is `Sentinel`
-
-
-    def example_func(b: bytes = SNTL_BYTES, c: Custom = SNTL_CUSTOM) -> Any:
+    def example_func(b: bytes = BYTES_SNTL, c: Custom = CUSTOM_SNTL) -> Any:
         if not b:
-            print('Sentinels are falsey so this check works')
-        if not tup:
-            ...
+            print('Sentinels are falsy so this check works')
+        if not c: ...
     ```
 
     This even works for complex types like `Callable`:
 
-    ```
-    # Note: It's incorrect to pass `Callable` directly to the constructor; instead, parameterize by subscription:
-    SNTL_CALLABLE = Sentinel[Callable[..., str]]()
-    reveal_type(SNTL_CALLABLE)  # Type of "SNTL_CALLABLE" is "(...) -> str"
+    ```py
+    CALLABLE_SNTL = Sentinel[Callable[..., str]]()
+    reveal_type(CALLABLE_SNTL)  # Type of "CALLABLE_SNTL" is "(...) -> str"
     ```
     """
 
@@ -147,61 +139,16 @@ class Sentinel:
         return inst
 
     def __class_getitem__(cls, key: Any) -> Any:
-        """Set the class-level `_cls_hint` to `key` and return the class object.
-
-        Parameters
-        ----------
-        key : T
-            Type to be associated with the class and inherited by future instances.
-
-        Returns
-        -------
-        T
-            `Sentinel` class object.
-        """
         cls._cls_hint = key
         return cls
 
     def __getitem__(self, key: Any) -> Any:
-        """Return the `Sentinel` instance for indexing operations.
-
-        Parameters
-        ----------
-        key : T
-            Index or key (ignored in this implementation).
-
-        Returns
-        -------
-        T
-            `Sentinel` instance.
-        """
         return self
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Return the `Sentinel` instance for callable operations.
-
-        Parameters
-        ----------
-        *args : Any
-            Positional arguments (ignored).
-        **kwargs : Any
-            Keyword arguments (ignored).
-
-        Returns
-        -------
-        T
-            `Sentinel` instance.
-        """
         return self
 
     def __str__(self) -> str:
-        """Return a string representation of the `Sentinel` instance.
-
-        Returns
-        -------
-        str
-            String value in the format of `<Sentinel: {hint!s}>`.
-        """
         hint_str, hint_repr = str(self._hint), repr(self._hint)
         if ('[' in hint_repr) and ('.' not in hint_repr):
             hint_str = hint_repr
@@ -214,134 +161,36 @@ class Sentinel:
         return f'<Sentinel: {hint_str}>'
 
     def __repr__(self) -> str:
-        """Return a detailed string representation of the `Sentinel` instance.
-
-        Returns
-        -------
-        str
-            String value in the format of `<Sentinel: {hint!r}>`.
-        """
         return f'<Sentinel: {self._hint!r}>'
 
     def __hash__(self) -> int:
-        """Return a hash value derived from the instance `__class__` and `hint`.
-
-        Returns
-        -------
-        int
-            Hash of the tuple `(self.__class__, self._hint)`.
-        """
         return hash((self.__class__, self._hint))
 
     def __bool__(self) -> bool:
-        """Return `False`, as `Sentinel` objects are always falsey.
-
-        Returns
-        -------
-        Literal[False]
-            Always `False`.
-        """
         return False
 
     def __eq__(self, other: object) -> bool:
-        """Check equality with another object.
-
-        Parameters
-        ----------
-        other : object
-            Object with which to compare.
-
-        Returns
-        -------
-        bool
-            - `True` if `other` is a `Sentinel` instance with the same `hint`.
-            - `False` otherwise.
-        """
         if not isinstance(other, self.__class__):
             return False
         return self.__class__ == other.__class__ and self._hint == other._hint
 
     def __copy__(self) -> Any:
-        """Return the `Sentinel` instance for shallow copy operations.
-
-        Returns
-        -------
-        Sentinel[T]
-            `Sentinel` instance.
-        """
         return self
 
     def __deepcopy__(self, memo: Any) -> Any:
-        """Return the `Sentinel` instance for deep copy operations.
-
-        Parameters
-        ----------
-        memo : Any
-            Memo dictionary (ignored).
-
-        Returns
-        -------
-        Sentinel[T]
-            `Sentinel` instance.
-        """
         return self
 
     def __reduce__(self) -> tuple[Callable[..., Sentinel], tuple[Any]]:
-        """Support for pickle serialization.
-
-        Returns
-        -------
-        tuple[Callable[..., Sentinel[T]], tuple[T]]
-            Tuple containing the instance `__class__` and `hint` for reconstruction.
-        """
         return (self.__class__, (self._hint,))
 
     def __reduce_ex__(self, protocol: SupportsIndex) -> tuple[Callable[..., Sentinel], tuple[Any]]:
-        """Support for pickle serialization with protocol.
-
-        Parameters
-        ----------
-        protocol : SupportsIndex
-            The pickle protocol (ignored, delegates to `__reduce__`).
-
-        Returns
-        -------
-        tuple[Callable[..., Sentinel[T]], tuple[T]]
-            Tuple containing the instance `__class__` and `hint` for reconstruction.
-        """
         return self.__reduce__()
 
     def __setattr__(self, name: str, value: Any) -> NoReturn:
-        """Raise an error to prevent attribute modification.
-
-        Parameters
-        ----------
-        name : str
-            Attribute name (ignored).
-        value : Any
-            Value to be set (ignored).
-
-        Raises
-        ------
-        AttributeError
-            Always raised.
-        """
         msg = f'Cannot modify attributes of {self!r}'
         raise AttributeError(msg)
 
     def __delattr__(self, name: str) -> NoReturn:
-        """Raise an error to prevent attribute deletion.
-
-        Parameters
-        ----------
-        name : str
-            Attribute name (ignored).
-
-        Raises
-        ------
-        AttributeError
-            Always raised.
-        """
         msg = f'Cannot delete attributes of {self!r}'
         raise AttributeError(msg)
 
@@ -359,7 +208,7 @@ def is_sentinel(obj: Any, typ: Any = None) -> TypeGuard[Sentinel]:
 
     Returns
     -------
-    TypeGuard[Sentinel[T]]
+    TypeGuard[Sentinel]
         - `True` if `obj` is a `Sentinel` instance.
         - `False` otherwise.
     """

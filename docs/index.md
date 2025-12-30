@@ -1,73 +1,74 @@
 # typed-sentinels
 
-Statically-typed sentinel objects with singleton qualities.
+Statically-typed sentinel objects for Python 3.9+.
 
-![Example of Sentinel class mimicking parameterized type](./images/sentinel.png)
+## Overview
 
-## Why `typed-sentinels`?
+`Sentinel` instances provide unique placeholder objects for a given type. They enable type-safe default values when
+`None` isn't suitable, especially for custom or complex types that require runtime parameters.
 
-`Sentinel` instances provide unique placeholder objects that maintain singleton behavior for a given type. They are
-particularly well-suited for use with types requiring parameters which are only available at runtime, where creating
-a default instance of the type may not be possible in advance, but the structural contract of the type is otherwise
-guaranteed to be fulfilled once present.
+### Key Features
 
-### Key Benefits
-
-- **Type safety**: `Sentinel` objects appear as their target type to static type checkers.
-- **Versatile**: Emulate complex, user-defined types, even those which require parameters on instantiation.
-- **Natural usage**: `Sentinel` instances are always falsey, enabling natural `if not: ...` patterns.
-- **Lightweight singleton**: `Sentinel` objects are incredibly lightweight, with only one instance per assigned type.
+- **Type safety**: Sentinels always appear as their target type to static type checkers.
+- **Singleton behavior**: Only one instance per type, ensuring identity consistency.
+- **Always falsy**: Natural `if not` patterns work as expected.
+- **Lightweight & thread-safe**: Minimal memory footprint and overhead, while remaining thread-safe.
+- **No external dependencies**: Written entirely using Python's standard libary.
 
 ## Installation
+
+### Installation using [`pip`](https://pip.pypa.io/en/stable/index.html)
 
 ```bash
 pip install typed-sentinels
 ```
 
-## Examples
+### Installation using [`uv`](https://docs.astral.sh/uv/)
 
-Basic usage:
+```bash
+uv add typed-sentinels
+```
+
+## Usage
+
+### Basic Usage
 
 ```python
-from typed_sentinels import Sentinel
-
-SNTL = Sentinel(str)  # Appears to be a string to the type checker
-
-
-def process_data(value: str = SNTL) -> str:
-    if not value:
-        return 'No value provided'
-    return f'Processing: {value}'
+--8<-- "docs/snippets/snippets.py:basic-usage"
 ```
+
+### Custom Classes
 
 Perfect for types requiring runtime parameters:
 
 ```python
-class DatabaseConfig:
-    def __init__(self, host: str, port: int):
-        self.host = host
-        self.port = port
-
-
-# Appears to the type-checker as an *instance* of `DatabaseConfig`
-SNTL_CFG = Sentinel(DatabaseConfig)
-
-
-def connect(config: DatabaseConfig = SNTL_CFG) -> str:
-    if config is SNTL_CFG:
-        config = DatabaseConfig('localhost', 5432)
-    return f'Connected to {config.host}:{config.port}'
+--8<-- "docs/snippets/snippets.py:adv-usage"
 ```
 
-## Singleton Behavior
-
-`Sentinel` objects parameterized with the same type `hint` are always the same instance:
+## Syntax Variants
 
 ```python
-S1 = Sentinel(dict[str, Any])
-S2 = Sentinel(dict[str, Any])
-S3 = Sentinel(dict[str, bytes])
-
-assert S1 is S2  # True - Same type, same instance
-assert S2 is not S3  # True - Different types, different instances
+--8<-- "docs/snippets/snippets.py:syntax-variants"
 ```
+
+## A Note on Linting
+
+To avoid linter warnings (like [Ruff B008](https://docs.astral.sh/ruff/rules/function-call-in-default-argument)), always
+define sentinels at module level rather than in-line:
+
+```python
+--8<-- "docs/snippets/snippets.py:note-on-linting-good"
+```
+
+Rather than doing it this way, with the `Sentinel` instance being created in-line as the parameter default:
+
+```python
+--8<-- "docs/snippets/snippets.py:note-on-linting-bad"
+```
+
+Note, however, that this will technically work fine, without linter complaints, in cases where the type itself is
+considered to be immutable, e.g., `tuple`.
+
+## Reference
+
+For complete API documentation, see the [API Reference](reference/index.md).

@@ -1,11 +1,30 @@
-site_url: https://typed-sentinels.blockmage.dev
 site_name: typed-sentinels
-site_description: Statically-typed sentinel objects with singleton qualities (for Python 3.12+).
-repo_url: https://github.com/blockmage/typed_sentinels
+site_description: Statically-typed sentinel objects for Python 3.9+.
+site_url: https://typed-sentinels.blockmage.dev
+
 repo_name: blockmage/typed_sentinels
+repo_url: https://github.com/blockmage/typed_sentinels
+
+nav:
+  - Home: index.md
+  - API Reference: reference/index.md
 
 theme:
   name: material
+
+  features:
+    - navigation.sections
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+
+    - search.highlight
+    - search.share
+
+    - content.code.copy
+    - content.code.annotate
+
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -14,6 +33,7 @@ theme:
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
+
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: indigo
@@ -22,59 +42,55 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 
-  features:
-    - navigation.sections
-    - navigation.instant
-    - navigation.tracking
-    - navigation.expand
-    - navigation.indexes
-    - search.highlight
-    - search.share
-    - content.code.copy
-    - content.code.annotate
-
 markdown_extensions:
   - admonition
   - attr_list
   - def_list
   - footnotes
   - md_in_html
-  - toc:
-      permalink: true
-  - pymdownx.highlight:
-      anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+
+  - toc:
+      permalink: true
+
   - pymdownx.tabbed:
       alternate_style: true
+
   - pymdownx.tasklist:
       custom_checkbox: true
 
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: false
+
 plugins:
-  - search
   - privacy
-  - meta:
-      enabled: true
-      meta_file: .meta.yml
+  - search
+  - section-index
+
   - gen-files:
       scripts:
         - scripts/gen_ref_pages.py
+
   - literate-nav:
       nav_file: SUMMARY.md
-  - section-index
+
   - mkdocstrings:
       handlers:
         python:
-          import:
+          inventories:
             - https://docs.python.org/3/objects.inv
+
           options:
             docstring_style: numpy
             heading_level: 2
+            members_order: source
             merge_init_into_class: true
             separate_signature: true
+
             show_category_heading: true
             show_if_no_docstring: true
             show_root_heading: true
@@ -83,13 +99,5 @@ plugins:
             show_source: true
             show_symbol_type_heading: true
             show_symbol_type_toc: true
-            filters:
-              - "!^_[^_]" # Hide private members (starting with single underscore)
-            members_order: source
 
-nav:
-  - Home: index.md
-  - Getting Started: getting-started.md
-  - Advanced Usage: advanced-usage.md
-  - Best Practices: best-practices.md
-  - Code Reference: reference/index.md
+            filters: ["!^_[^_]"]
