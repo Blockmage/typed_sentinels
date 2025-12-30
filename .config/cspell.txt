@@ -1,7 +1,10 @@
+charliermarsh
 inlinehilite
+jnoortheen
 mdformat
 monkeyc
 norecursedirs
+numtide
 pymdownx
 sntl
 superfences

@@ -22,6 +22,7 @@ _OBJECT = object()
 
 @final
 class Sentinel:
+    # fmt: off
     """Statically-typed sentinel object with singleton qualities.
 
     `Sentinel` instances provide unique placeholder objects that maintain singleton behavior for a given type. They are
@@ -80,6 +81,8 @@ class Sentinel:
     reveal_type(SNTL_CALLABLE)  # Type of "SNTL_CALLABLE" is "(...) -> str"
     ```
     """
+
+    # fmt: on
 
     __slots__ = ('__weakref__', '_hint')
 

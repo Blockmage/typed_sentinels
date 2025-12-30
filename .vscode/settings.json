@@ -1,160 +1,52 @@
 {
-  /* --- Even Better TOML (Extension) Settings ------------------------------ */
+  "editor.formatOnSave": false,
+  "editor.insertSpaces": true,
 
-  "evenBetterToml.taplo.configFile.path": "taplo.toml",
-
-  /* --- Bash IDE (Extension) Settings -------------------------------------- */
-
-  "bashIde.backgroundAnalysisMaxFiles": 1000,
-  "bashIde.includeAllWorkspaceSymbols": true,
-  "bashIde.shfmt.caseIndent": true,
-
-  /* --- MarkdownLint (Extension) Settings ---------------------------------- */
-
-  "markdownlint.config": {
-    "line-length": {
-      "code_blocks": false,
-      "line_length": 100,
-      "tables": false
-    },
-    "MD024": {
-      "siblings_only": true
-    },
-    "MD033": false,
-    "MD041": false,
-    "MD046": {
-      "style": "consistent"
-    }
+  "emeraldwalk.runonsave": {
+    "showElapsed": true,
+    "commands": [
+      {
+        "cmd": "\"${workspaceFolder}/.config/bin/treefmt\" --config-file \"${workspaceFolder}/.config/treefmt.toml\" \"${file}\"",
+        "match": ".*"
+      }
+    ]
   },
 
-  /* --- Nix & Related Extensions Settings ---------------------------------- */
+  "bashIde.backgroundAnalysisMaxFiles": 0,
+  "bashIde.includeAllWorkspaceSymbols": false,
+  "bashIde.shfmt.caseIndent": true,
+
+  "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
+
+  "evenBetterToml.taplo.configFile.path": ".config/taplo.toml",
+
+  "python-envs.pythonProjects": [],
+  "python.useEnvironmentsExtension": true,
+  "python.testing.pytestArgs": ["."],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.analysis.autoImportCompletions": true,
 
   "nix.enableLanguageServer": true,
-  "nix.serverPath": "nil",
+  "nix.hiddenLanguageServerErrors": ["textDocument/definition"],
+  "nix.serverPath": "nixd",
   "nix.serverSettings": {
     "nil": {
       "formatting": {
         "command": ["alejandra"]
+      },
+      "diagnostics": {
+        "ignored": ["unused_binding", "unused_with"]
       }
+    },
+    "nixd": {
+      "formatting": {
+        "command": ["alejandra"]
+      },
+      "diagnostic": {
+        "suppress": ["sema-unused-def-lambda-noarg-formal"]
+      }
+      // "options": {}
     }
-  },
-
-  /* --- Python & Related Extensions Settings ------------------------------- */
-
-  "autoDocstring.docstringFormat": "numpy",
-
-  "python.analysis.autoImportCompletions": true,
-  "python.analysis.enableColorPicker": true,
-
-  "python.testing.pytestArgs": ["."],
-  "python.testing.pytestEnabled": true,
-  "python.testing.unittestEnabled": false,
-
-  "python.autoComplete.extraPaths": [
-    "${workspaceFolder}/.venv/lib/python3.14/site-packages",
-    "${workspaceFolder}/.venv/lib/python3.13/site-packages",
-    "${workspaceFolder}/.venv/lib/python3.12/site-packages",
-    "${workspaceFolder}/.venv/lib/python3.11/site-packages",
-    "${workspaceFolder}/.venv/lib/python3.10/site-packages"
-  ],
-
-  /* --- Run-on-Save (Extension) Settings ----------------------------------- */
-
-  "emeraldwalk.runonsave": {
-    "commands": [
-      {
-        "cmd": "${workspaceFolder}/.vscode/on_save.sh ${file}",
-        "match": "\\.py$|\\.md$|\\.toml$|\\.yml$|\\.yaml$|\\.sh$|\\.bash$|\\activate$"
-      }
-    ],
-    "showElapsed": true
-  },
-
-  /* --- Files Settings ----------------------------------------------------- */
-
-  "[javascript][jsx][typescript][typescriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[json][jsonc]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  // Prevent auto-formatting files like 'LICENSE.txt'
-  "[plaintext]": {
-    "editor.formatOnSave": false
-  },
-
-  // Auto-save functionality
-  "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 20000,
-  "files.autoSaveWhenNoErrors": true,
-  "files.insertFinalNewline": true,
-
-  "files.restoreUndoStack": true,
-
-  "files.associations": {
-    "pyrightconfig.json": "jsonc",
-    "extensions.json": "jsonc",
-    "settings.json": "jsonc",
-    "wrangler.json": "jsonc"
-  },
-
-  /* --- Exclusions from file explorer, watcher daemon, & file search ------- */
-
-  "files.exclude": {
-    "**/__pycache__": true,
-    "**/.*cache*/**": true,
-    "**/.DS_Store": true,
-    "**/.git": true,
-    "**/.next/**": true,
-    "**/.nuxt/**": true,
-    "**/.on_save.lock": true,
-    "**/.venv/**": true,
-    "**/.vercel/**": true
-  },
-
-  "files.watcherExclude": {
-    "**/.*cache*/**": true,
-    "**/.git/**": true,
-    "**/.local/**": true,
-    "**/.next/**": true,
-    "**/.nuxt/**": true,
-    "**/.on_save.lock": true,
-    "**/.venv/**": true,
-    "**/.vercel/**": true,
-    "**/build/**": true,
-    "**/data/**": true,
-    "**/dist/**": true,
-    "**/node_modules": true,
-    "**/out/**": true,
-    "**/output/**": true,
-    "**/package*/**": true,
-    "**/release*/**": true,
-    "**/site-packages/**": true,
-    "**/*styled-system/**": true,
-    "**/target/**": true,
-    "**/vendor/**": true
-  },
-
-  "search.exclude": {
-    "**/.*cache*/**": true,
-    "**/.git/**": true,
-    "**/.local/**": true,
-    "**/.next/**": true,
-    "**/.nuxt/**": true,
-    "**/.on_save.lock": true,
-    "**/.venv/**": true,
-    "**/.vercel/**": true,
-    "**/build/**": true,
-    "**/data/**": true,
-    "**/dist/**": true,
-    "**/node_modules": true,
-    "**/out/**": true,
-    "**/output/**": true,
-    "**/package*/**": true,
-    "**/release*/**": true,
-    "**/site-packages/**": true,
-    "**/*styled-system/**": true,
-    "**/target/**": true,
-    "**/vendor/**": true
   }
 }

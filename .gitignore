@@ -8,6 +8,9 @@
 # --------- Top-level directories
 !/.vscode/**/*
 #!/reports/**/*
+!/.config/**/*
+!/.github/**/*
+!/docs/**/*
 !/scripts/**/*
 !/src/**/*
 !/tests/**/*
@@ -15,6 +18,10 @@
 # --------- Documentation
 !/docs/**/*.md
 !/docs/**/*.png
+
+# '/.config/treefmt.toml' is created by devenv from '/.config/treefmt.nix'
+!treefmt.nix
+treefmt.toml
 
 ### ===========================================================
 

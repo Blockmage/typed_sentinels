@@ -1,8 +1,7 @@
 line-length:
-  line_length: 100
+  line_length: 120
   code_blocks: false
   tables: false
-
 # MD033/no-inline-html
 MD033: false
 # MD041/first-line-heading/first-line-h1
