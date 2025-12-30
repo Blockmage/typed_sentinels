@@ -21,7 +21,7 @@ repos:
     rev: v2.3.10
     hooks:
       - id: biome-check
-        additional_dependencies: ["@biomejs/biome@2.0.6"]
+        additional_dependencies: ["@biomejs/biome@2.2.4"]
         types_or: [css, javascript, json, jsx, ts, tsx]
 
   # --------------- [ check-github-workflows | check-taskfile ] ----------------
@@ -136,16 +136,19 @@ repos:
     hooks:
       - id: ruff-check
         types_or: [python, pyi]
-        args: [--fix]
+        args: [--config, .config/ruff.toml, --fix]
       - id: ruff-format
         types_or: [python, pyi]
+        args: [--config, .config/ruff.toml]
 
   # -------------------------------- [ taplo ] ---------------------------------
   - repo: https://github.com/ComPWA/taplo-pre-commit
     rev: v0.9.3
     hooks:
       - id: taplo-lint
+        args: [--config, .config/taplo.toml]
       - id: taplo-format
+        args: [--config, .config/taplo.toml]
 
   # -------------------------- [ validate-pyproject ] --------------------------
   - repo: https://github.com/abravalheri/validate-pyproject
@@ -159,3 +162,4 @@ repos:
     rev: v0.20.0
     hooks:
       - id: yamlfmt
+        args: [-conf, .config/yamlfmt.yml]

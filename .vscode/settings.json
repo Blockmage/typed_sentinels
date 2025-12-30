@@ -1,52 +1,52 @@
 {
-  "editor.formatOnSave": false,
-  "editor.insertSpaces": true,
+	"editor.formatOnSave": false,
+	"editor.insertSpaces": true,
 
-  "emeraldwalk.runonsave": {
-    "showElapsed": true,
-    "commands": [
-      {
-        "cmd": "\"${workspaceFolder}/.config/bin/treefmt\" --config-file \"${workspaceFolder}/.config/treefmt.toml\" \"${file}\"",
-        "match": ".*"
-      }
-    ]
-  },
+	"emeraldwalk.runonsave": {
+		"showElapsed": true,
+		"commands": [
+			{
+				"cmd": "\"${workspaceFolder}/.config/bin/treefmt\" --config-file \"${workspaceFolder}/.config/treefmt.toml\" \"${file}\"",
+				"match": ".*"
+			}
+		]
+	},
 
-  "bashIde.backgroundAnalysisMaxFiles": 0,
-  "bashIde.includeAllWorkspaceSymbols": false,
-  "bashIde.shfmt.caseIndent": true,
+	"bashIde.backgroundAnalysisMaxFiles": 0,
+	"bashIde.includeAllWorkspaceSymbols": false,
+	"bashIde.shfmt.caseIndent": true,
 
-  "ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
+	"ruff.configuration": "${workspaceFolder}/.config/ruff.toml",
 
-  "evenBetterToml.taplo.configFile.path": ".config/taplo.toml",
+	"evenBetterToml.taplo.configFile.path": ".config/taplo.toml",
 
-  "python-envs.pythonProjects": [],
-  "python.useEnvironmentsExtension": true,
-  "python.testing.pytestArgs": ["."],
-  "python.testing.pytestEnabled": true,
-  "python.testing.unittestEnabled": false,
-  "python.analysis.autoImportCompletions": true,
+	"python-envs.pythonProjects": [],
+	"python.useEnvironmentsExtension": true,
+	"python.testing.pytestArgs": ["."],
+	"python.testing.pytestEnabled": true,
+	"python.testing.unittestEnabled": false,
+	"python.analysis.autoImportCompletions": true,
 
-  "nix.enableLanguageServer": true,
-  "nix.hiddenLanguageServerErrors": ["textDocument/definition"],
-  "nix.serverPath": "nixd",
-  "nix.serverSettings": {
-    "nil": {
-      "formatting": {
-        "command": ["alejandra"]
-      },
-      "diagnostics": {
-        "ignored": ["unused_binding", "unused_with"]
-      }
-    },
-    "nixd": {
-      "formatting": {
-        "command": ["alejandra"]
-      },
-      "diagnostic": {
-        "suppress": ["sema-unused-def-lambda-noarg-formal"]
-      }
-      // "options": {}
-    }
-  }
+	"nix.enableLanguageServer": true,
+	"nix.hiddenLanguageServerErrors": ["textDocument/definition"],
+	"nix.serverPath": "nixd",
+	"nix.serverSettings": {
+		"nil": {
+			"formatting": {
+				"command": ["alejandra"]
+			},
+			"diagnostics": {
+				"ignored": ["unused_binding", "unused_with"]
+			}
+		},
+		"nixd": {
+			"formatting": {
+				"command": ["alejandra"]
+			},
+			"diagnostic": {
+				"suppress": ["sema-unused-def-lambda-noarg-formal"]
+			}
+			// "options": {}
+		}
+	}
 }
