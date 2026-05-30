@@ -1,3 +1,5 @@
+#!/usr/bin/env -S uv run --python=3.13 --script
+
 from pathlib import Path
 
 import mkdocs_gen_files
