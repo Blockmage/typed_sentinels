@@ -10,9 +10,8 @@ pip install typed-sentinels
 
 ## Quick Start
 
-- `Sentinel` instances are useful for creating unique, type-annotated placeholders, typically used
-    when a default value other than `None` is desirable. Only a single instance of `Sentinel` may
-    exist for a given type.
+- `Sentinel` instances are useful for creating unique, type-annotated placeholders, typically used when a default value
+  other than `None` is desirable. Only a single instance of `Sentinel` may exist for a given type.
 
 ```python
 from typed_sentinels import Sentinel
@@ -33,9 +32,9 @@ result = process_data()  # "No value provided"
 result = process_data('demo123')  # "Processing: demo123"
 ```
 
-- The `Sentinel` class is particularly well-suited for use with types requiring parameters which are
-    only available at runtime, where creating a default instance of the type may not be possible in
-    advance, but the structural contract of the type is otherwise guaranteed to be fulfilled once present.
+- The `Sentinel` class is particularly well-suited for use with types requiring parameters which are only available at
+  runtime, where creating a default instance of the type may not be possible in advance, but the structural contract of
+  the type is otherwise guaranteed to be fulfilled once present.
 
 ```python
 from typed_sentinels import Sentinel
@@ -71,9 +70,8 @@ assert S1 is S2  # True
 assert S2 is not S3  # True
 ```
 
-- In the simplest form, supposing you don't want or need a distinct instance for different types,
-    you could use the `Sentinel` without parameterization or arguments, and the type-checker will
-    still be happy:
+- In the simplest form, supposing you don't want or need a distinct instance for different types, you could use the
+  `Sentinel` without parameterization or arguments, and the type-checker will still be happy:
 
 ```python
 class Custom:

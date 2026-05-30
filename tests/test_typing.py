@@ -9,11 +9,11 @@ class TestPyrightIntegration:
     """Test that Pyright correctly infers types for Sentinel instances."""
 
     @pytest.mark.parametrize('expectation', EXPECTED_TYPES, ids=lambda e: e.variable_name)
-    def test_type_expectation(self, pyright_runner: BatchPyrightRunner, expectation: ExpectedType):
+    def test_type_expectation(self, pyright_runner: BatchPyrightRunner, expectation: ExpectedType) -> None:
         success, message = pyright_runner.check_type_expectation(expectation)
         assert success, message
 
-    def test_all_expectations_batch(self, pyright_runner: BatchPyrightRunner):
+    def test_all_expectations_batch(self, pyright_runner: BatchPyrightRunner) -> None:
         failures: list[str] = []
 
         for expectation in EXPECTED_TYPES:
@@ -24,7 +24,7 @@ class TestPyrightIntegration:
         if failures:
             pytest.fail('Failed type expectations:\n' + '\n'.join(failures))
 
-    def test_pyright_ran_successfully(self, pyright_runner: BatchPyrightRunner):
+    def test_pyright_ran_successfully(self, pyright_runner: BatchPyrightRunner) -> None:
         output = pyright_runner.pyright_output
         errors = [diag for diag in output.get('generalDiagnostics', []) if diag.get('severity') == 'error']
 
@@ -32,7 +32,7 @@ class TestPyrightIntegration:
             error_messages = [diag.get('message', 'Unknown error') for diag in errors]
             pytest.fail('Pyright errors:\n' + '\n'.join(error_messages))
 
-    def test_all_expected_variables_found(self, pyright_runner: BatchPyrightRunner):
+    def test_all_expected_variables_found(self, pyright_runner: BatchPyrightRunner) -> None:
         expected_vars = {exp.variable_name for exp in EXPECTED_TYPES}
         variable_types = pyright_runner.variable_types
         found_vars = set(variable_types.keys())

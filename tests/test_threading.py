@@ -16,9 +16,8 @@ from typed_sentinels import Sentinel
 class TestSentinelThreading:
     """Test thread safety and locking mechanisms of Sentinel instances."""
 
-    def test_singleton_under_contention(self):
+    def test_singleton_under_contention(self) -> None:
         """Test that singleton behavior is maintained under high thread contention."""
-
         hint_type = str
         num_threads = 50
         sentinels_per_thread = 100
@@ -26,9 +25,8 @@ class TestSentinelThreading:
         all_sentinels = []
         lock = threading.Lock()
 
-        def create_sentinels():
+        def create_sentinels() -> None:
             """Worker function that creates many sentinels."""
-
             local_sentinels = []
             for _ in range(sentinels_per_thread):
                 s = Sentinel(hint_type)
@@ -55,9 +53,8 @@ class TestSentinelThreading:
         for s in all_sentinels:
             assert s.hint == hint_type
 
-    def test_multiple_hints_concurrent_creation(self):
+    def test_multiple_hints_concurrent_creation(self) -> None:
         """Test concurrent creation of sentinels with different hint types."""
-
         hint_types = [str, int, float, bool, list, dict, set, tuple, bytes]
         num_threads_per_type = 10
         sentinels_per_thread = 50
@@ -65,9 +62,8 @@ class TestSentinelThreading:
         results = {}
         results_lock = threading.Lock()
 
-        def create_sentinels_for_hint(hint_type: Any):
+        def create_sentinels_for_hint(hint_type: Any) -> None:
             """Create sentinels for a specific hint type."""
-
             sentinels = []
             for _ in range(sentinels_per_thread):
                 s = Sentinel(hint_type)
@@ -100,17 +96,15 @@ class TestSentinelThreading:
             for s in sentinels:
                 assert s.hint == hint_type
 
-    def test_cache_race_conditions(self):
+    def test_cache_race_conditions(self) -> None:
         """Test for race conditions in the cache lookup and creation."""
-
         hint_type = int
         barrier = threading.Barrier(20)
         created_sentinels = []
         lock = threading.Lock()
 
-        def synchronized_creation():
+        def synchronized_creation() -> None:
             """All threads create sentinel at exactly the same time."""
-
             barrier.wait()
             s = Sentinel(hint_type)
 
@@ -131,15 +125,13 @@ class TestSentinelThreading:
         unique_ids = {id(s) for s in created_sentinels}
         assert len(unique_ids) == 1, f'Race condition detected: {len(unique_ids)} different objects created'
 
-    def test_cache_weak_reference_cleanup(self):
+    def test_cache_weak_reference_cleanup(self) -> None:
         """Test that cache properly handles weak reference cleanup under threading."""
-
         results = []
         results_lock = threading.Lock()
 
-        def create_and_forget_sentinels():
+        def create_and_forget_sentinels() -> None:
             """Create sentinels and let them go out of scope."""
-
             for i in range(10):
                 hint = f'unique_type_{threading.current_thread().ident}_{i}'
                 s = Sentinel(hint)
@@ -174,15 +166,13 @@ class TestSentinelThreading:
         for thread_id, hints in hints_by_thread.items():
             assert len(hints) == 10, f'Thread {thread_id} should have created 10 unique hints'
 
-    def test_deadlock_prevention(self):
+    def test_deadlock_prevention(self) -> None:
         """Test that the locking mechanism doesn't cause deadlocks."""
-
         results = []
         results_lock = threading.Lock()
 
-        def create_multiple_sentinels():
+        def create_multiple_sentinels() -> None:
             """Create multiple different sentinels in sequence."""
-
             thread_results = []
             for i in range(20):
                 hint_types = [str, int, float, bool, list]
@@ -218,16 +208,14 @@ class TestSentinelThreading:
         assert end_time - start_time < 5.0, 'Threads took too long - possible lock contention issues'
         assert len(results) == 15 * 20, 'Not all sentinels were created'
 
-    def test_lock_contention_performance(self):
+    def test_lock_contention_performance(self) -> None:
         """Test performance under high lock contention."""
-
         hint_type = str
         num_threads = 20
         operations_per_thread = 1000
 
-        def high_frequency_creation():
+        def high_frequency_creation() -> None:
             """Rapidly create sentinels to test lock performance."""
-
             for _ in range(operations_per_thread):
                 s = Sentinel(hint_type)
 
@@ -253,14 +241,12 @@ class TestSentinelThreading:
 
         assert end_time - start_time < 10.0, 'Performance under lock contention is too slow'
 
-    def test_thread_executor_stress_test(self):
+    def test_thread_executor_stress_test(self) -> None:
         """Stress test using ThreadPoolExecutor for more realistic concurrent load."""
-
         hint_types = [str, int, float, bool, bytes]
 
-        def worker_task(hint_type: Any, iterations: int):
+        def worker_task(hint_type: Any, iterations: int) -> dict[str, Any]:
             """Worker that creates sentinels and returns statistics."""
-
             sentinels = []
             unique_ids = set()
 
@@ -288,16 +274,14 @@ class TestSentinelThreading:
         for result in results:
             assert result['unique_ids'] == 1, f'Task saw multiple IDs for {result["hint_type"]}: {result["unique_ids"]}'
 
-    def test_exception_safety_under_threading(self):
+    def test_exception_safety_under_threading(self) -> None:
         """Test that exceptions don't leave locks in inconsistent state."""
-
         valid_sentinels = []
         exceptions_caught = []
         lock = threading.Lock()
 
-        def mixed_operations():
+        def mixed_operations() -> None:
             """Mix valid and invalid sentinel creation."""
-
             thread_results = {'valid': [], 'exceptions': []}
 
             # fmt: off
@@ -314,7 +298,7 @@ class TestSentinelThreading:
                 try:
                     s = op()
                     thread_results['valid'].append(s)
-                except Exception as e:  # noqa: BLE001
+                except Exception as e:
                     thread_results['exceptions'].append(type(e).__name__)
 
             with lock:
@@ -352,20 +336,17 @@ class TestSentinelThreading:
         for hint, ids in by_hint.items():
             assert len(ids) == 1, f'Singleton violation for {hint} after exceptions: {len(ids)} IDs'
 
-    def test_thread_executor_stress_test_with_keeper(self):
+    def test_thread_executor_stress_test_with_keeper(self) -> None:
         """Stress test with a keeper reference to prevent weak reference cleanup."""
-
         hint_types = [str, int, float, bool, bytes]
 
         # Keep one reference to each type to prevent WeakValueDictionary cleanup
         keepers = {hint_type: Sentinel(hint_type) for hint_type in hint_types}
 
-        def worker_task(hint_type: Any, iterations: int):
+        def worker_task(hint_type: Any, iterations: int) -> dict[str, Any]:
             """Worker that creates sentinels and returns statistics."""
-
             sentinels = []
             unique_ids = set()
-
             for _ in range(iterations):
                 s = Sentinel(hint_type)
                 # Note: This is showing as "unreachable code," however it's not clear why @Alchemyst0x 2025-09-02
@@ -411,12 +392,10 @@ class TestSentinelThreading:
                     f"Result doesn't match keeper: {result['first_id']} != {keeper_id}"
                 )
 
-    def test_weak_reference_behavior_is_the_culprit(self):
+    def test_weak_reference_behavior_is_the_culprit(self) -> None:
         """Prove that WeakValueDictionary cleanup is causing the 'multiple IDs'."""
-
         s1 = Sentinel('test_type')
         s1_id = id(s1)
-
         # Delete the last reference
         # Even without GC, WeakValueDictionary should clean up
         del s1

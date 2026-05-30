@@ -10,7 +10,6 @@ def create_sentinel_worker(
     thread_id: int, sentinel_type: Any, iterations: int = 100
 ) -> tuple[int, int, list[Sentinel]]:
     """Create `Sentinel` instances in a tight loop."""
-
     local_instances: list[Sentinel] = []
     local_instance_ids: set[int] = set()
 
