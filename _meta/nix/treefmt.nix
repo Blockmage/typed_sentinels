@@ -111,7 +111,7 @@ in {
             command = lib.getExe pkgs.ruff;
             excludes = excludes.py;
             includes = includes.py;
-            options = ["--config" "${cfgDir}/ruff.toml" "check" "--fix"];
+            options = ["--config" "${cfgDir}/ruff.toml" "check" "--fix-only"];
           };
           docformatter = {
             priority = 1;

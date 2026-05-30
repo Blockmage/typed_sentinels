@@ -1,5 +1,5 @@
 site_name: typed-sentinels
-site_description: Statically-typed sentinel objects for Python 3.9+.
+site_description: Statically-typed sentinel objects for Python 3.10+.
 site_url: https://typed-sentinels.blockmage.dev
 
 repo_name: blockmage/typed_sentinels

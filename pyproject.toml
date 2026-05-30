@@ -6,7 +6,7 @@
   description     = "Statically-typed sentinel objects with singleton qualities."
   name            = "typed-sentinels"
   readme          = "README.md"
-  requires-python = ">=3.9"
+  requires-python = ">=3.10"
   version         = "1.1.1"
 
   authors = [

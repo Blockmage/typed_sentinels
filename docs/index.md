@@ -1,6 +1,6 @@
 # typed-sentinels
 
-Statically-typed sentinel objects for Python 3.9+.
+Statically-typed sentinel objects for Python 3.10+.
 
 ## Overview
 
