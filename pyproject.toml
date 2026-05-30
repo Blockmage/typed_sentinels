@@ -7,7 +7,7 @@
   name            = "typed-sentinels"
   readme          = "README.md"
   requires-python = ">=3.9"
-  version         = "1.1.0"
+  version         = "1.1.1"
 
   authors = [
     { email = "opensource+typed-sentinels@blockmage.dev", name = "Blockmage Developer" },
