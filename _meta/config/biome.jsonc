@@ -1,14 +1,19 @@
 {
+  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+  "root": false,
+  "extends": "//",
   "assist": {
+    "enabled": true,
     "actions": {
       "source": {
+        "recommended": true,
         "organizeImports": "on"
       }
     }
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": [ "**" ],
+    "includes": ["**"],
     "maxSize": 10485760
   },
   "formatter": {
@@ -33,6 +38,27 @@
       "quoteStyle": "single",
       "semicolons": "always",
       "trailingCommas": "all"
+    }
+  },
+  "graphql": {
+    "formatter": {
+      "enabled": true
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "quoteStyle": "single"
+    },
+    "linter": {
+      "enabled": true
+    },
+    "assist": {
+      "enabled": true
+    },
+    "parser": {
+      "cssModules": true,
+      "tailwindDirectives": true
     }
   },
   "json": {
@@ -69,7 +95,7 @@
   },
   "overrides": [
     {
-      "includes": [ "**/*.json", "**/*.jsonc", "**/*.sublime-settings", "**/*.sublime-keymap" ],
+      "includes": ["**/*.json", "**/*.jsonc", "**/*.sublime-settings", "**/*.sublime-keymap"],
       "json": {
         "formatter": {
           "trailingCommas": "none",
@@ -83,7 +109,7 @@
       }
     },
     {
-      "includes": [ "**/*.sublime-settings", "**/*.sublime-keymap", "pyrightconfig.json" ],
+      "includes": ["**/*.sublime-settings", "**/*.sublime-keymap", "pyrightconfig.json"],
       "json": {
         "formatter": {
           "expand": "always"
@@ -91,7 +117,7 @@
       }
     },
     {
-      "includes": [ "**/*.astro" ],
+      "includes": ["**/*.svelte", "**/*.astro", "**/*.vue"],
       "linter": {
         "rules": {
           "correctness": {
