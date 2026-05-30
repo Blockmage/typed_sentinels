@@ -1,5 +1,6 @@
 {
   "language": "en",
+  "readonly": true,
   "useGitignore": false,
   "allowCompoundWords": false,
   "ignoreRandomStrings": true,
@@ -17,29 +18,27 @@
 
   "ignoreRegExpList": [
     // 1Password secret references
-    "\\b[a-z0-9]{20,}\\b",
-    // Full-caps acronyms of 3-5 length
-    "\\b[A-Z]{3,5}\\b",
-    // All-caps variable names with underscores (e.g., 'INSTALL_CROC')
-    "\\b[A-Z]+_[A-Z0-9_]+\\b",
-    // Partial words in text like '[Dd]esktop'
-    "\\[[A-Za-z]{1,2}\\][a-zA-Z]+",
-    // File extensions of 1-6 length (e.g., '.icns', '.ovpn', etc.)
-    "\\.[a-zA-Z]{1,6}(?![a-zA-Z])",
-    // SSH keys and base64-like strings
-    "\\b[A-Za-z0-9+/]{20,}={0,2}\\b",
-    // Password hashes (starts with '$', alphanumeric and special chars)
-    "\\$[0-9]\\$[A-Za-z0-9./]+\\$[A-Za-z0-9./]+",
-    // Azure AI Assistant IDs (e.g. 'asst_KrJDWyHZjoZbhFjEFutuDYsW')
-    "\\basst_[A-Za-z0-9]{20,}\\b"
+    "\\b([\\da-z]{26}|[\\dA-Z]{26})\\b",
+    // Full-caps acronyms of 2-5 length
+    "\\b[A-Z]{2,5}\\b",
+    // Variable names with underscores (e.g., 'INSTALL_CROC')
+    "\\b_?[A-Z]+(_?)[A-Z0-9_]+\\b",
+    // Partial words in words with bracketed letters (e.g., '[Dd]esktop')
+    "(\\[[A-Za-z]{1,}\\])([a-zA-Z]+)?\\b",
+    // File extensions (e.g., '.icns', '.ovpn', '.config.json' etc.)
+    "(\\.[a-zA-Z]{1,6}((\\.[a-zA-Z]{1,4})?)\\b)",
+    // SSH public keys
+    "(ssh-(rsa|dss|ed25519|ecdsa-[a-z0-9]+))\\s+([A-Za-z0-9+\\/]+={0,2})",
+    // Azure/OpenAI assistant IDs (e.g. 'asst_7AZSrv5I3XzjUqWS40X5UgRr')
+    "\\b(asst|thread|msg|run|file)_([A-Za-z0-9]{24})\\b"
   ],
 
   "dictionaryDefinitions": [
     {
       "addWords": true,
-      "description": "Workspace Custom Wordlist ('.vscode/cspell.txt')",
+      "description": "Workspace Custom Wordlist ('_meta/config/cspell.txt')",
       "name": "Workspace Custom Wordlist",
-      "path": "./.config/cspell.txt"
+      "path": "_meta/config/cspell.txt"
     },
     {
       "addWords": true,
@@ -53,7 +52,6 @@
     // Custom dictionaries
     "Workspace Custom Wordlist",
     "User Custom Wordlist",
-
     // Dictionaries provided by cspell
     "ada",
     "aws",

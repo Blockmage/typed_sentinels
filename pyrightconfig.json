@@ -1,25 +1,51 @@
 {
-	"include": ["src", "docs", "tests", "scripts", "examples"],
+  "include": [
+    "src",
+    "docs",
+    "tests",
+    "scripts",
+    "examples"
+  ],
 
-	"pythonPlatform": "Linux",
-	"pythonVersion": "3.13",
-	"typeCheckingMode": "strict",
+  "pythonPlatform": "Linux",
+  "pythonVersion": "3.13",
+  "typeCheckingMode": "strict",
 
-	"venv": "venv",
-	"venvPath": ".devenv/state/",
+  "venv": "venv",
+  "venvPath": ".devenv/state/",
 
-	"analyzeUnannotatedFunctions": true,
-	"deprecateTypingAliases": true,
-	"reportMissingTypeStubs": true,
-	"strictDictionaryInference": false,
-	"strictListInference": true,
-	"strictSetInference": true,
-	"useLibraryCodeForTypes": true,
+  "analyzeUnannotatedFunctions": true,
+  "deprecateTypingAliases": true,
+  "reportMissingTypeStubs": true,
+  "strictDictionaryInference": false,
+  "strictListInference": true,
+  "strictSetInference": true,
+  "useLibraryCodeForTypes": true,
 
-	"executionEnvironments": [
-		{ "root": "examples", "extraPaths": ["./src"] },
-		{ "root": "scripts", "extraPaths": ["./src"] },
-		{ "root": "docs", "extraPaths": ["./src"] },
-		{ "root": ".", "extraPaths": ["./src"] }
-	]
+  "executionEnvironments": [
+    {
+      "root": "examples",
+      "extraPaths": [
+        "./src"
+      ]
+    },
+    {
+      "root": "scripts",
+      "extraPaths": [
+        "./src"
+      ]
+    },
+    {
+      "root": "docs",
+      "extraPaths": [
+        "./src"
+      ]
+    },
+    {
+      "root": ".",
+      "extraPaths": [
+        "./src"
+      ]
+    }
+  ]
 }

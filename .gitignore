@@ -1,8 +1,6 @@
 *
 !*/
 
-#
-##
 ### ========= Add paths specific to this project here =========
 
 # --------- Top-level directories
@@ -19,11 +17,18 @@
 !/docs/**/*.md
 !/docs/**/*.png
 
-# '/.config/treefmt.toml' is created by devenv from '/.config/treefmt.nix'
+### ===========================================================
+
+# --------- Top-level '_meta' directory
+!/_meta/config/**/*
+!/_meta/nix/**/*
+!/_meta/scripts/**/*
+!/_meta/templates/**/*
+
+# --------- Treefmt
+# '/_meta/config/treefmt.toml' is created automatically from '/_meta/nix/treefmt.nix'
 !treefmt.nix
 treefmt.toml
-
-### ===========================================================
 
 # --------- Git / GitHub
 !.git-blame-ignore-revs
@@ -37,7 +42,7 @@ treefmt.toml
 # --------- Common
 !ATTRIBUTION*
 !CHANGELOG*
-!CODE_OF_CONDUCT*
+!CODE*OF*CONDUCT*
 !CONTRIBUTING*
 !COPYING*
 !FUNDING*
@@ -61,6 +66,13 @@ treefmt.toml
 !.cspell.txt
 !cspell.txt
 
+# --------- Polylith
+# https://davidvujic.github.io/python-polylith-docs/workspace/
+!/bases/**/*
+!/components/**/*
+!/development/**/*
+!/projects/**/*
+
 # --------- Commitizen
 # https://github.com/commitizen-tools/commitizen
 !.cz.json
@@ -75,11 +87,6 @@ treefmt.toml
 !*.age
 !*.agebox
 !.ageboxreg.*
-
-# --------- pre-commit
-# https://github.com/pre-commit/pre-commit
-!.pre-commit-config.*
-!.pre-commit-hooks.*
 
 # --------- MarkdownLint
 # https://github.com/DavidAnson/markdownlint
@@ -126,7 +133,7 @@ treefmt.toml
 
 # --------- Pyright / Pylance
 # https://github.com/microsoft/pyright
-!pyrightconfig.json
+!pyrightconfig.json*
 
 # --------- Ruff
 # https://github.com/astral-sh/ruff
@@ -204,7 +211,7 @@ treefmt.toml
 !devenv.nix
 !devenv.yaml
 
-# --------- DevContainers
+# --------- Dev Containers
 # https://github.com/devcontainers
 !.devcontainer/**/*
 
@@ -218,12 +225,6 @@ treefmt.toml
 !Dockerfile
 !compose.y*ml
 !docker-compose.y*ml
-
-# --------- Polylith
-# https://davidvujic.github.io/python-polylith-docs/workspace/
-!/bases/**/*
-!/components/**/*
-!/projects/**/*
 
 # --------- Brewfile
 # https://docs.brew.sh/Brew-Bundle-and-Brewfile
@@ -367,4 +368,3 @@ wheels/
 # ========================= Overrides =========================
 !*example*
 !.envrc
-!/examples/**/*
