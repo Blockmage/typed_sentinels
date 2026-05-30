@@ -24,7 +24,7 @@ class ExpectedType:
 class BatchPyrightRunner:
     """Runner for batch Pyright testing over a single file."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.test_cases_file = Path(__file__).parent / '_objects.py'
         self._pyright_output: dict[str, Any] | None = None
         self._variable_types: dict[str, str] | None = None
@@ -32,7 +32,6 @@ class BatchPyrightRunner:
     @property
     def pyright_output(self) -> dict[str, Any]:
         """Cached Pyright output."""
-
         if self._pyright_output is None:
             self._pyright_output = self._run_pyright()
         return self._pyright_output
@@ -40,14 +39,12 @@ class BatchPyrightRunner:
     @property
     def variable_types(self) -> dict[str, str]:
         """Cached variable types."""
-
         if self._variable_types is None:
             self._variable_types = self._extract_variable_types()
         return self._variable_types
 
     def _run_pyright(self) -> dict[str, Any]:  # pragma: no cover
         """Run Pyright on the test cases file."""
-
         try:
             result = subprocess.run(
                 ['pyright', '--outputjson', str(self.test_cases_file)],
@@ -65,7 +62,6 @@ class BatchPyrightRunner:
 
     def _extract_variable_types(self) -> dict[str, str]:  # pragma: no cover
         """Extract variable type information from Pyright output."""
-
         types: dict[str, str] = {}
 
         for diagnostic in self.pyright_output.get('generalDiagnostics', []):
@@ -82,7 +78,6 @@ class BatchPyrightRunner:
 
     def check_type_expectation(self, expectation: ExpectedType) -> tuple[bool, str]:  # pragma: no cover
         """Check a single type expectation."""
-
         var_name = expectation.variable_name
         expected_type = expectation.expected_type
 
@@ -103,14 +98,14 @@ class BatchPyrightRunner:
                 if not expectation.runtime_validator(runtime_obj):
                     return False, f"Runtime validation failed for '{var_name}'"
 
-            except Exception as e:  # noqa: BLE001
+            except Exception as e:
                 return False, f"Runtime validation error for '{var_name}': {e}"
 
         return True, f'✅ {var_name} passed'
 
 
 @pytest.fixture(scope='session')
-def pyright_runner():
+def pyright_runner() -> BatchPyrightRunner:
     return BatchPyrightRunner()
 
 
@@ -133,22 +128,22 @@ EXPECTED_TYPES = [
     ExpectedType(
         'any_sentinel',
         'Any',
-        lambda x: is_sentinel(x),
+        is_sentinel,
     ),
     ExpectedType(
         'callable_sentinel',
         '(...) -> str',
-        lambda x: is_sentinel(x),
+        is_sentinel,
     ),
     ExpectedType(
         'nested_dict_sentinel',
         'dict[str, tuple[str, ...]]',
-        lambda x: is_sentinel(x),
+        is_sentinel,
     ),
     ExpectedType(
         'list_sentinel',
         'list[int]',
-        lambda x: is_sentinel(x),
+        is_sentinel,
     ),
     ExpectedType(
         'simple_custom_sentinel',
@@ -163,11 +158,11 @@ EXPECTED_TYPES = [
     ExpectedType(
         'union_sentinel',
         'str | int',
-        lambda x: is_sentinel(x),
+        is_sentinel,
     ),
     ExpectedType(
         'complex_union_sentinel',
         'str | tuple[str, dict[str, str | tuple[str, ...]]]',
-        lambda x: is_sentinel(x),
+        is_sentinel,
     ),
 ]
