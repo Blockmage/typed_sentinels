@@ -82,5 +82,3 @@ class Custom:
 CUSTOM: Custom = Sentinel()
 reveal_type(CUSTOM)  # Runtime type is 'Sentinel'
 ```
-
-![Example of Sentinel class mimicking parameterized type](./images/sentinel.png)
