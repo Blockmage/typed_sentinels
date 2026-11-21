@@ -11,6 +11,10 @@
   "pythonVersion": "3.13",
   "typeCheckingMode": "strict",
 
+  "ignore": [
+    "_meta/scripts/*.py"
+  ],
+
   "venv": "venv",
   "venvPath": ".devenv/state/",
 

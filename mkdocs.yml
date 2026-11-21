@@ -26,7 +26,7 @@ theme:
     - content.code.annotate
 
   palette:
-    - media: "(prefers-color-scheme: light)"
+    - media: '(prefers-color-scheme: light)'
       scheme: default
       primary: indigo
       accent: indigo
@@ -34,7 +34,7 @@ theme:
         icon: material/brightness-7
         name: Switch to dark mode
 
-    - media: "(prefers-color-scheme: dark)"
+    - media: '(prefers-color-scheme: dark)'
       scheme: slate
       primary: indigo
       accent: indigo
@@ -100,4 +100,4 @@ plugins:
             show_symbol_type_heading: true
             show_symbol_type_toc: true
 
-            filters: ["!^_[^_]"]
+            filters: ['!^_[^_]']

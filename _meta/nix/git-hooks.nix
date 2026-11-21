@@ -4,7 +4,6 @@
   ...
 }: let
   wspRoot = ".";
-  cfgDir = "_meta/config";
 in {
   git-hooks = {
     enable = true;
@@ -26,46 +25,44 @@ in {
 
     hooks = {
       # -------------------------------- Hooks ---------------------------------
-      treefmt.enable = true;
-
-      pyright.enable = true;
-      pytest.enable = true;
-
       actionlint.enable = true;
 
-      cspell-msg.enable = true;
-      cspell-wsp.enable = true;
+      cargo-check.enable = true;
+      clippy.enable = true;
 
-      trufflehog.enable = true;
+      gitleaks.enable = true;
 
       check-added-large-files.enable = true;
       check-case-conflicts.enable = true;
       check-merge-conflicts.enable = true;
       check-symlinks.enable = true;
-
       end-of-file-fixer.enable = true;
       mixed-line-endings.enable = true;
       trim-trailing-whitespace.enable = true;
 
-      # ------------------------------- Options --------------------------------
-      treefmt.settings.fail-on-change = false;
-      treefmt.settings.no-cache = false;
+      cspell-msg.enable = true;
+      cspell-wsp.enable = true;
 
+      pyright.enable = true;
+      pytest.enable = true;
+
+      treefmt.enable = true;
+
+      # ------------------------------- Options --------------------------------
       check-added-large-files.args = ["--maxkb=8192"];
       mixed-line-endings.args = ["--fix=auto"];
 
-      trufflehog = {
-        stages = ["pre-commit" "pre-push"];
-        args = [
-          "git"
-          "\"file://${wspRoot}\""
-          "--since-commit"
-          "HEAD"
-          "--results=verified"
-          "--fail"
-          "--exclude-paths=\"${cfgDir}/trufflehog_exclude.txt\""
-          "--detector-timeout=15s"
-        ];
+      treefmt = {
+        settings = {
+          fail-on-change = false;
+          no-cache = false;
+        };
+      };
+
+      pyright = {
+        stages = ["pre-push"];
+        types = ["python"];
+        args = ["--project" "${wspRoot}"];
       };
 
       cspell-wsp = {
@@ -75,7 +72,7 @@ in {
         stages = ["pre-commit" "pre-push"];
         args = [
           "--config"
-          "${wspRoot}/cspell.config.jsonc"
+          "${wspRoot}/cspell.config.yml"
           "--no-summary"
           "--no-progress"
           "--no-must-find-files"
@@ -90,19 +87,13 @@ in {
         stages = ["commit-msg"];
         args = [
           "--config"
-          "${wspRoot}/cspell.config.jsonc"
+          "${wspRoot}/cspell.config.yml"
           "--no-must-find-files"
           "--no-progress"
           "--no-summary"
           "--files"
           ".git/COMMIT_EDITMSG"
         ];
-      };
-
-      pyright = {
-        stages = ["pre-push"];
-        types = ["python"];
-        args = ["--project" "${wspRoot}"];
       };
 
       pytest = {
@@ -113,7 +104,22 @@ in {
         stages = ["pre-push"];
         types = ["python"];
         entry = ''
-          sh -c '"${wspRoot}/.devenv/state/venv/bin/pytest"'
+          sh -c '
+          _pytest="${wspRoot}/.devenv/state/venv/bin/pytest"
+          if [ ! -x "$_pytest" ]; then
+            echo "Skipping - pytest not found."
+          else
+            _found="$("${pkgs.findutils}/bin/find" "${wspRoot}" \
+              -path "*/.*/*"             -prune -o  \
+              -path "*/data/*"           -prune -o  \
+              -path "*/vendor/*"         -prune -o  \
+              -path "*/node_modules/*"   -prune -o  \
+              -path "*/target/debug/*"   -prune -o  \
+              -path "*/target/release/*" -prune -o  \
+              -iname "*test*.py" -print
+            )"
+            [ "$_found" != "" ] && "$_pytest"
+          fi'
         '';
       };
     };

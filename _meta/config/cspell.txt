@@ -1,3 +1,4 @@
+alejandra
 arangodb
 arangolint
 asasalint
@@ -5,9 +6,11 @@ bidichk
 bierner
 blockmage
 bytedance
+cachix
 cfgDir
 charliermarsh
 chromedp
+clippy
 containedctx
 cyclop
 davidanson
@@ -59,8 +62,10 @@ leodido
 lifecycles
 loggercheck
 maintidx
+maturin
 mechatroner
 merkle
+mkdocstrings
 monkeyc
 myzel
 nakedret
@@ -68,10 +73,12 @@ nestif
 nhoizey
 nilness
 nilnesserr
+nixpkgs
 njpwerner
 nlreturn
 nolint
 nolintlint
+norecursedirs
 numtide
 paralleltest
 perfsprint
@@ -83,6 +90,7 @@ promlint
 promlinter
 protogetter
 pymdownx
+pyupgrade
 qclass
 recvcheck
 rowserrcheck

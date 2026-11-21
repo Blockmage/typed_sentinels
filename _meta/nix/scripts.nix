@@ -6,8 +6,24 @@
   ...
 }: {
   scripts = {
+    _link_binaries_to_workspace = {
+      exec = ''
+        set -eu
+
+        treefmtBin="${lib.getExe pkgs.treefmt}"
+        treefmtCfg="${config.treefmt.config.build.configFile}"
+        biomeBin="${lib.getExe pkgs.biome}"
+
+        wspRoot="''${WORKSPACE_ROOT:-"''${DEVENV_ROOT:-"."}"}"
+        if mkdir -p "$wspRoot/_meta/bin"; then
+          [ -f "$treefmtBin" ] && ln -sf "$treefmtBin" "$wspRoot/_meta/bin/treefmt"
+          [ -f "$treefmtCfg" ] && ln -sf "$treefmtCfg" "$wspRoot/_meta/config/treefmt.toml"
+          [ -f "$biomeBin" ]   && ln -sf "$biomeBin"   "$wspRoot/_meta/bin/biome"
+        fi
+      '';
+    };
+
     git = {
-      description = ''Alias for `git` that forces the use of UTC timestamps for commits'';
       exec = ''
         UTC_TIMESTAMP="$(date '+%s')+0000"
         export TZ="UTC" GIT_AUTHOR_DATE="$UTC_TIMESTAMP" GIT_COMMITTER_DATE="$UTC_TIMESTAMP"
@@ -15,25 +31,18 @@
       '';
     };
 
-    _link_binaries_to_workspace = {
-      description = lib.concatStrings [
-        ''Symlink the binaries for `treefmt`, `biome`, and Go development tools to the workspace so that they can be ''
-        ''used by the VS Code run-on-save and Go extensions. This runs automatically when entering the shell.''
-      ];
+    git-hooks-install = {
       exec = ''
-        set -eu
+        prek -f --install-hooks
+        prek -f --hook-type pre-commit --hook-type pre-push --hook-type commit-msg
+      '';
+    };
 
-        wspRoot="''${WORKSPACE_ROOT:-"''${DEVENV_ROOT:-"."}"}"
-
-        treefmtBin="${lib.getExe pkgs.treefmt}"
-        treefmtCfg="${config.treefmt.config.build.configFile}"
-        biomeBin="${lib.getExe pkgs.biome}"
-
-        if mkdir -p "$wspRoot/_meta/bin"; then
-          [ -f "$treefmtBin" ] && ln -sf "$treefmtBin" "$wspRoot/_meta/bin/treefmt"
-          [ -f "$treefmtCfg" ] && ln -sf "$treefmtCfg" "$wspRoot/_meta/config/treefmt.toml"
-          [ -f "$biomeBin" ]   && ln -sf "$biomeBin"   "$wspRoot/_meta/bin/biome"
-        fi
+    git-hooks-fix = {
+      exec = ''
+        git config --unset-all core.hooksPath 2>/dev/null
+        prek -f --install-hooks 2>/dev/null
+        prek -f --hook-type pre-commit --hook-type pre-push --hook-type commit-msg 2>/dev/null
       '';
     };
   };

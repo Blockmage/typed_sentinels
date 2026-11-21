@@ -4,62 +4,84 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  pkgs-u = import inputs.nixpkgs-unstable {system = pkgs.stdenv.system;};
+in {
   imports = [
     ./_meta/nix/git-hooks.nix
     ./_meta/nix/scripts.nix
     ./_meta/nix/treefmt.nix
   ];
 
-  dotenv = {
-    enable = false;
-    disableHint = true;
-  };
-
   packages = [
+    pkgs-u.git
+    pkgs-u.nodejs_26
+    pkgs-u.pnpm_12
+    pkgs-u.pyright
+    pkgs-u.uv
+
     pkgs.alejandra
     pkgs.biome
     pkgs.cspell
+
     pkgs.findutils
     pkgs.gawk
-    pkgs.git
     pkgs.gnugrep
     pkgs.gnused
+
+    pkgs.maturin
+
     pkgs.nixd
-    pkgs.nodejs_24
-    pkgs.pyright
-    pkgs.uv
   ];
 
+  dotenv.disableHint = true;
+
   env = {
-    NODE_OPTIONS = "--max-old-space-size=4096";
+    PYTHONPYCACHEPREFIX = ".pycache"; # Tidiness: Put bytecode files in a single folder.
+    UV_EXCLUDE_NEWER = "14 days"; # Security: 14-day quarantine for uv-installed Python packages.
+    PIP_UPLOADED_PRIOR_TO = "P14D"; # Security: 14-day quarantine for pip-installed Python packages.
+    PIP_ONLY_BINARY = ":all:"; # Security: Block setup.py code execution at install time.
+
+    NODE_OPTIONS = "--max-old-space-size=8096";
+
     NPM_CONFIG_AUDIT = "true";
     NPM_CONFIG_FUND = "false";
     NPM_CONFIG_IGNORE_SCRIPTS = "true";
-    NPM_CONFIG_MINIMUM_RELEASE_AGE = "1440";
+    NPM_CONFIG_MINIMUM_RELEASE_AGE = "1440"; # Does this work? (Unable to find any documentation.)
     NPM_CONFIG_SAVE_EXACT = "true";
     NPM_CONFIG_UPDATE_NOTIFIER = "false";
   };
 
   enterShell = ''
     _link_binaries_to_workspace
+
+    if [ -f "$DEVENV_STATE/venv/bin/activate" ]; then
+      source "$DEVENV_STATE/venv/bin/activate"
+    fi
   '';
 
   languages = {
-    python.enable = true;
     shell.enable = true;
-    nix.enable = true;
 
-    python = {
-      version = "3.13";
-      venv.enable = true;
-      uv = {
-        enable = true;
-        sync.enable = true;
-        sync.allExtras = true;
-        sync.allGroups = true;
-        sync.allPackages = false;
-      };
-    };
+    nix.enable = true;
+    nix.lsp.package = pkgs.nixd; # pkgs.nil;
+
+    python.enable = false;
+    python.package = pkgs-u.python313;
+    python.venv.enable = true;
+    python.uv.enable = true;
+    python.uv.package = pkgs-u.uv;
+    python.uv.sync.allExtras = true;
+    python.uv.sync.allGroups = true;
+    python.uv.sync.allPackages = false;
+    python.uv.sync.enable = true;
+
+    javascript.enable = false;
+    javascript.package = pkgs-u.nodejs_26;
+    javascript.pnpm.enable = true;
+    javascript.pnpm.package = pkgs-u.pnpm_12;
+    javascript.pnpm.install.enable = false; # Whether to run `pnpm install` automatically
+
+    typescript.enable = false;
   };
 }
